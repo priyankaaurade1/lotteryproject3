@@ -1,0 +1,822 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Playstar</title>
+  <!-- <link rel="stylesheet" href="{% static 'style.css' %}"> -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+  body, h1, h2, h3, h4, h5, h6, td, span, label, input, select, button {
+    font-family: "Times New Roman", serif !important;
+  }
+</style>
+<style>
+  .container,
+  .container-fluid,
+  .container-lg,
+  .container-md,
+  .container-sm,
+  .container-xl,
+  .container-xxl {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+</style>
+  <style>  
+  header {
+    background-color: #f2f2f2;
+    text-align: center;
+  }
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.wrapper {
+  flex: 1;
+}
+footer {
+  width: 100%;
+  background-color: #f2f2f2;
+  text-align: center;
+  padding: 8px 0;
+  font-weight: bold;
+}
+.head {
+    text-align: center;
+    margin: 0px auto;
+    background-color: #FFA7DC;
+    background-image: linear-gradient(to bottom right, #c494d8);
+    padding-left: 4%;
+    padding-right: 4%;
+    padding-bottom: 20px;
+    font-family: "Times new Roman" !important;
+}
+td{
+    text-align: -webkit-center;
+    vertical-align: middle;
+}
+</style>
+<style>
+.table>:not(caption)>*>* {
+    padding: 0.05rem 0.4rem !important; 
+}
+</style>
+<style>
+  #timeSelector {
+    transition: all 0.3s ease;
+  }
+</style>
+<style>
+  /* Base (mobile-first) */
+  .text-label {
+    font-weight: 600;
+  }
+  .main-title {
+    font-size: 30px !important;
+    font-weight: bold;
+  }
+
+  /* Mobile view ≤576px */
+  @media screen and (max-width: 576px) {
+    .text-label-mini {
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+    .main-title-mini {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .small-block {
+      min-width: 30%;
+      flex-shrink: 1;
+    }
+    .form-label,
+    .form-control,
+    .form-select,
+    .btn-sm {
+      font-size: 12px !important;
+    }
+    .small-field label {
+      font-size: 12px !important;
+    }
+    .btn-sm {
+      padding: 4px 10px !important;
+    }
+    #mainForm {
+      font-size: 13px;
+    }
+  }
+
+  /* NEW: Medium desktop (992–1400px) - Make it smaller to fit better */
+  @media screen and (min-width: 992px) and (max-width: 1400px) {
+    .text-label {
+      font-size: 18px !important;
+      font-weight: 600;
+    }
+    .main-title {
+      font-size: 36px !important;
+      font-weight: bold;
+    }
+    .btn-sm {
+      font-size: 16px !important;
+      padding: 5px 12px !important;
+    }
+    .form-label {
+      font-size: 20px !important;
+    }
+    .form-control,
+    .form-select {
+      font-size: 16px !important;
+    }
+  }
+
+  /* Large desktop ≥1401px - Keep your big style */
+  @media screen and (min-width: 1401px) {
+    .text-label {
+      font-size: 30px !important;
+      font-weight: 600;
+    }
+    .main-title {
+      font-size: 50px !important;
+      font-weight: bold;
+    }
+    .btn-sm {
+      font-size: 18px !important;
+      padding: 6px 14px !important;
+    }
+    .form-label {
+      font-size: 25px !important;
+    }
+    .form-control,
+    .form-select {
+      font-size: 17px !important;
+    }
+  }
+</style>
+  <style>
+  .result-cell {
+    font-size: 10px;
+    font-weight: bold;
+    padding: 4px;
+  }
+  .result-heading{
+    font-size: 20px;
+  } 
+  @media (min-width: 576px) {
+    .result-cell {
+      font-size: 22px;
+      padding: 6px;
+    }
+    .result-heading{
+    font-size: 30px;
+    } 
+  }
+  @media (min-width: 992px) {
+    .result-cell {
+      font-size: 35px;
+      padding: 8px;
+    }
+    .result-heading{
+    font-size: 35px;
+    } 
+  }
+</style>
+<style>
+  .main-title {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+</style>
+<style>
+.small-labels > div {
+  margin: 0;
+  padding: 0 4px;
+  font-weight: 600;
+  white-space: nowrap;
+  font-size: 28px;
+}
+
+.small-labels button {
+  margin: 0 4px;
+}
+
+.main-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+.gap-2 {
+    gap: 3.5rem !important;
+}
+</style>
+</head>
+<body>
+
+<div class="container-fluid">
+  <marquee behavior="" direction="" style="font-size: larger;">
+      Note :- All the information here is based on Numeric astrology is not related to any type of gambling. Viewing this website is on your own risk. We are not responsible for any issue or scam. We respect all country rules and laws. If you not agree with our site, please quit our site right now..!!
+  </marquee>
+  <div class="head container-fluid bg-light py-1 px-2" >
+    <!-- desktop view -->
+    <div class="row text-center align-items-center py-2">
+      <div class="col d-flex flex-wrap justify-content-center align-items-center gap-2 small-labels">
+        <div>Time: <span class="currentTime">--:--:--</span></div>
+        <div>Date: <span>{{ formatted_date }}</span></div>
+        <div><strong class="main-title">Playstar</strong></div>
+        <button type="button" class="btn btn-outline-primary btn-sm p-1" onclick="location.reload();" title="Refresh">
+          <i class="bi bi-arrow-clockwise"></i>
+        </button>
+        <div>Draw Time: <span>{{ selected_time }}</span></div>
+        <div>Next Draw: <span class="nextDraw">--:--:--</span></div>
+        <input type="hidden" class="nextDrawTime" value="{{ next_draw_time_str }}">
+      </div>
+    </div>
+
+    <!-- mobile view -->
+    <div class="d-flex d-lg-none flex-row flex-wrap justify-content-between align-items-center text-center gap-2">
+      <div class="d-flex flex-column align-items-start small-block">
+        <div class="text-label-mini">Time: <span class="currentTime">--:--:--</span></div>
+        <div class="text-label-mini">Date: <span>{{ formatted_date }}</span></div>
+      </div>
+      <div class="d-flex flex-row align-items-center small-block">
+        <strong class="timeHoverZone main-title-mini">Playstar</strong>
+        <button type="button" class="btn btn-outline-primary p-1" onclick="location.reload();" title="Refresh">
+          <i class="bi bi-arrow-clockwise" style="font-size: 16px;"></i>
+        </button>
+      </div>
+      <div class="d-flex flex-column align-items-end small-block">
+        <div class="text-label-mini">Draw Time: <span>{{ selected_time }}</span></div>
+        <div class="text-label-mini">Next Draw: <span class="nextDraw">--:--:--</span></div>
+        <input type="hidden" class="nextDrawTime" value="{{ next_draw_time_str }}">
+      </div>
+    </div>
+    <section id="timeSelector" >
+      <form method="post" id="mainForm" class="d-flex flex-wrap align-items-center justify-content-center gap-2">
+        {% csrf_token %}
+        <!-- Date & Time -->
+          <div class="d-flex flex-row align-items-center gap-1 small-field">
+          <label class="form-label mb-0" for="dateInput"><strong>Select Date:</strong></label>
+          <input type="date" id="dateInput" name="date" value="{{ selected_date }}" class="autoSubmit form-control form-control-sm" style="font-weight: bold; width: auto;">
+        </div>
+        <div class="d-flex flex-row align-items-center gap-1 small-field">
+          <label class="form-label mb-0" for="timeInput"><strong>Select Time:</strong></label>
+          <select name="time" id="timeInput" class="autoSubmit form-select form-select-sm" onchange="setMode()" style="font-weight: bold; width: auto;">
+            <option value="" {% if not selected_time and show_history != '4' %}selected{% endif %}>All Times</option>
+            {% for slot in time_slots %}
+              <option value="{{ slot }}" {% if slot == selected_time and show_history != '4' %}selected{% endif %}>{{ slot }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <input type="hidden" id="currentSlotTime" value="{{ selected_time }}">
+        <!-- Buttons -->
+        <button type="button" class="btn btn-success btn-sm" id="btnSingle">SINGLE</button>
+        <button type="button" class="btn btn-success btn-sm" id="btnTwo">TWO</button>
+        <button type="button" class="btn btn-success btn-sm" id="btnFull">FULL</button>
+
+          <!-- History Dropdown -->
+          <div class="dropdown dropend">
+            <button class="btn btn-success dropdown-toggle btn-sm" id="btnHistory" type="button" data-bs-toggle="dropdown">
+              HISTORY
+            </button>
+            <ul class="dropdown-menu">
+              <li><button class="dropdown-item" type="button" onclick="setHistoryModeAndSubmit('single')">SINGLE</button></li>
+              <li><button class="dropdown-item" type="button" onclick="setHistoryModeAndSubmit('two')">TWO</button></li>
+              <li><button class="dropdown-item" type="button" onclick="setHistoryModeAndSubmit('full')">FULL</button></li>
+              <li><button class="dropdown-item" type="button" onclick="setHistoryModeAndSubmit('chart')">CHART</button></li>
+            </ul>
+          </div>
+        </div>
+        <input type="hidden" name="show_history" id="show_history_input" value="{{ show_history|default:'4' }}">
+        <input type="hidden" name="history_mode" id="history_mode_input" value="{{ history_mode|default:'full' }}">
+      </form>
+    </section>
+  </div>
+    {% if show_history == "1" or show_history == "2" %}
+    <div  id="resultArea">
+      <table class="table table-bordered text-center" style="font-weight:bold;border: 1px solid black;">
+        <thead>
+          <tr>
+            <th class="result-cell" style="background-color: #131a3e;color: white;border: 1px solid white;"></th>
+            {% for col in column_headers|slice:":10" %}
+              <th class="result-cell" style="background-color: #131a3e !important;color: white !important;border: 1px solid white !important;">{{ col }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in grid|slice:":10" %}
+            <tr class="result-cell" style="background-color: #131a3e !important;color: white !important;border: 1px solid white !important;">
+              <th class="result-cell" style="background-color: #131a3e !important;color: white !important;border: 1px solid white !important;">
+                  {{ forloop.counter0|add:forloop.counter0|add:forloop.counter0|add:forloop.counter0|add:forloop.counter0|add:forloop.counter0|add:forloop.counter0|add:forloop.counter0|add:forloop.counter0|add:forloop.counter0|stringformat:"02d" }}
+              </th>
+              {% for cell in row %}
+                {% if forloop.counter0 == 0 %}
+                  <td class="result-cell" style="background-color:#FFEB3B; font-weight:bold;" align="center">
+                {% elif forloop.counter0 == 1 %}
+                  <td class="result-cell" style="background-color:#ecd4d8; font-weight:bold;" align="center">
+                {% elif forloop.counter0 == 2 %}
+                  <td class="result-cell" style="background-color:#85d825; font-weight:bold;" align="center">
+                {% elif forloop.counter0 == 3 %}
+                  <td class="result-cell" style="background-color:#ea8d9e; font-weight:bold;" align="center">
+                {% elif forloop.counter0 == 4 %}
+                  <td class="result-cell" style="background-color:#e3a0ef; font-weight:bold;" align="center">
+                {% elif forloop.counter0 == 5 %}
+                  <td class="result-cell" style="background-color:#d47c8c; font-weight:bold;" align="center">
+                {% elif forloop.counter0 == 6 %}
+                  <td class="result-cell" style="background-color:#ecd4d8; font-weight:bold;" align="center">
+                {% elif forloop.counter0 == 7 %}
+                  <td class="result-cell" style="background-color:#FFEB3B; font-weight:bold;" align="center">
+                {% elif forloop.counter0 == 8 %}
+                  <td class="result-cell" style="background-color:#5bbfec; font-weight:bold;" align="center">
+                {% elif forloop.counter0 == 9 %}
+                  <td class="result-cell" style="background-color:#ffa7dc; font-weight:bold;" align="center">
+                {% else %}
+                  <td>
+                {% endif %}
+                  {{ cell|default:"--" }}
+                  </td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% elif show_history == "4" %}
+      <!-- history results -->
+      {% if history_mode == "full" %}
+        <div id="historyTable" >
+          {% if history_data %}
+            {% for slot, rows in history_data %}
+                <div class="result-heading d-flex justify-content-between align-items-center px-2" style=" font-weight: bold;">
+                  <div>Playstar</div>
+                  <div>{{ slot }}</div>
+                  <div>{{ selected_date_display }}</div>
+                </div>
+              <table class="table table-bordered text-center" cellspacing="0" border="2" style="border-collapse:collapse; margin:0 auto;border: 1px solid black;">
+                <tbody>
+                  {% for row in rows %}
+                    <tr>
+                      {% for cell in row %}
+                        {% if forloop.counter0 == 0 %}
+                          <td class="result-cell" style="background-color:#FFEB3B; font-weight:bold;" align="center">
+                        {% elif forloop.counter0 == 1 %}
+                          <td class="result-cell" style="background-color:#ecd4d8; font-weight:bold;" align="center">
+                        {% elif forloop.counter0 == 2 %}
+                          <td class="result-cell" style="background-color:#85d825; font-weight:bold;" align="center">
+                        {% elif forloop.counter0 == 3 %}
+                          <td class="result-cell" style="background-color:#ea8d9e; font-weight:bold;" align="center">
+                        {% elif forloop.counter0 == 4 %}
+                          <td class="result-cell" style="background-color:#e3a0ef; font-weight:bold;" align="center">
+                        {% elif forloop.counter0 == 5 %}
+                          <td class="result-cell" style="background-color:#d47c8c; font-weight:bold;" align="center">
+                        {% elif forloop.counter0 == 6 %}
+                          <td class="result-cell" style="background-color:#ecd4d8; font-weight:bold;" align="center">
+                        {% elif forloop.counter0 == 7 %}
+                          <td class="result-cell" style="background-color:#FFEB3B; font-weight:bold;" align="center">
+                        {% elif forloop.counter0 == 8 %}
+                          <td class="result-cell" style="background-color:#5bbfec; font-weight:bold;" align="center">
+                        {% elif forloop.counter0 == 9 %}
+                          <td class="result-cell" style="background-color:#ffa7dc; font-weight:bold;" align="center">
+                        {% else %}
+                          <td>
+                        {% endif %}
+                          {{ cell.number|default:"--" }}
+                        </td>
+                      {% endfor %}
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            {% endfor %}
+          {% endif %}
+        </div>
+        {% elif history_mode == "chart" %}
+          <div id="chartbuttons" class="container chart_table my-3">
+            <form method="post" id="chartForm">
+              {% csrf_token %}
+              <input type="hidden" name="history_mode" value="chart" />
+              <div class="row g-2 justify-content-center">
+                {% for i in "0123456789"|make_list %}
+                  <div class="col-4 col-sm-3 col-md-2 col-lg-1 d-flex justify-content-center">
+                    <button type="submit" name="chart_prefix" value="{{ i }}0" class="btn btn-warning w-100">
+                      {{ i }}0
+                    </button>
+                  </div>
+                {% endfor %}
+              </div>
+            </form>
+          </div>
+          <table class="table table-bordered text-center">
+            <thead>
+              <tr>
+                <th class="result-cell" style="background-color: #131a3e;color: white;border: 1px solid white;">TIME</th>
+                {% for i in "0123456789"|make_list %}
+                  <th class="result-cell" style="background-color: #131a3e;color: white;border: 1px solid white;">{{ selected_chart_prefix|add:i }}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody style="border: 1px solid black;">
+              {% for time_label, row in chart_data %}
+                <tr>
+                  <td class="result-cell" style="background-color: #131a3e;color: white;border: 1px solid white;">{{ time_label }}</td>
+                  {% for value in row %}
+                    {% if forloop.counter0 == 0 %}
+                      <td class="result-cell" style="background-color:#FFEB3B; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
+                    {% elif forloop.counter0 == 1 %}
+                      <td class="result-cell" style="background-color:#ecd4d8; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
+                    {% elif forloop.counter0 == 2 %}
+                      <td class="result-cell" style="background-color:#85d825; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
+                    {% elif forloop.counter0 == 3 %}
+                      <td class="result-cell" style="background-color:#ea8d9e; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
+                    {% elif forloop.counter0 == 4 %}
+                      <td class="result-cell" style="background-color:#e3a0ef; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
+                    {% elif forloop.counter0 == 5 %}
+                      <td class="result-cell" style="background-color:#d47c8c; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
+                    {% elif forloop.counter0 == 6 %}
+                      <td class="result-cell" style="background-color:#ecd4d8; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
+                    {% elif forloop.counter0 == 7 %}
+                      <td class="result-cell" style="background-color:#FFEB3B; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
+                    {% elif forloop.counter0 == 8 %}
+                      <td class="result-cell" style="background-color:#5bbfec; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
+                    {% elif forloop.counter0 == 9 %}
+                      <td class="result-cell" style="background-color:#ffa7dc; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
+                    {% else %}
+                      <td>{{ value|default:"--" }}</td>
+                    {% endif %}
+                  {% endfor %}
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+        <!-- single & two historydata -->
+        {% for label, grid in history_data %}
+            <div class="result-heading d-flex justify-content-between align-items-center px-3" style="font-weight: bold;">
+              <div>Playstar</div>
+              <div>{{ label }}</div>
+              <div>{{ selected_date_display }}</div>
+            </div>
+            <div>
+              <table class="result-cell table table-bordered text-center" style="font-weight:bold;border: 1px solid black;">
+                <thead class="result-cell" style="background-color: #131a3e;color: white;border: 1px solid white;">
+                  <tr>
+                    <th class="result-cell" style="background-color: #131a3e;color: white;border: 1px solid white;"></th>
+                    {% for col in column_headers|slice:":10" %}
+                      <th class="result-cell" style="background-color: #131a3e;color: white;border: 1px solid white;">{{ col }}</th>
+                    {% endfor %}
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for row in grid|slice:":10" %}
+                    <tr>
+                      <th style="background-color: #131a3e;color: white;border: 1px solid white;">
+                        {{ forloop.counter0|add:forloop.counter0|add:forloop.counter0|add:forloop.counter0|add:forloop.counter0|add:forloop.counter0|add:forloop.counter0|add:forloop.counter0|add:forloop.counter0|add:forloop.counter0|stringformat:"02d" }}
+                      </th>
+                      {% for cell in row %}
+                        {% if forloop.counter0 == 0 %}
+                          <td class="result-cell" style="background-color:#FFEB3B; font-weight:bold;" align="center">
+                        {% elif forloop.counter0 == 1 %}
+                          <td class="result-cell" style="background-color:#ecd4d8; font-weight:bold;" align="center">
+                        {% elif forloop.counter0 == 2 %}
+                          <td class="result-cell" style="background-color:#85d825; font-weight:bold;" align="center">
+                        {% elif forloop.counter0 == 3 %}
+                          <td class="result-cell" style="background-color:#ea8d9e; font-weight:bold;" align="center">
+                        {% elif forloop.counter0 == 4 %}
+                          <td class="result-cell" style="background-color:#e3a0ef; font-weight:bold;" align="center">
+                        {% elif forloop.counter0 == 5 %}
+                          <td class="result-cell" style="background-color:#d47c8c; font-weight:bold;" align="center">
+                        {% elif forloop.counter0 == 6 %}
+                          <td class="result-cell" style="background-color:#ecd4d8; font-weight:bold;" align="center">
+                        {% elif forloop.counter0 == 7 %}
+                          <td class="result-cell" style="background-color:#FFEB3B; font-weight:bold;" align="center">
+                        {% elif forloop.counter0 == 8 %}
+                          <td class="result-cell" style="background-color:#5bbfec; font-weight:bold;" align="center">
+                        {% elif forloop.counter0 == 9 %}
+                          <td class="result-cell" style="background-color:#ffa7dc; font-weight:bold;" align="center">
+                        {% else %}
+                          <td>
+                        {% endif %}
+                          {{ cell|default:"--" }}
+                          </td>
+                      {% endfor %}
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% endfor %}
+      {% endif %}
+    {% else %}
+      <!-- Full table button -->
+      <div id="fullTable" >
+        <table class="table table-bordered text-center" cellspacing="0" rules="all" border="1" id="GridView1" style="border-collapse:collapse;margin:0 auto;border: 1px solid black;">
+          {% if results_exist %}
+            {% for row in grid %}
+              <tr>
+                {% for cell in row %}
+                  {% if forloop.counter0 == 0 %}
+                    <td class="result-cell" style="background-color:#FFEB3B; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
+                  {% elif forloop.counter0 == 1 %}
+                    <td class="result-cell" style="background-color:#ecd4d8; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
+                  {% elif forloop.counter0 == 2 %}
+                    <td class="result-cell" style="background-color:#85d825; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
+                  {% elif forloop.counter0 == 3 %}
+                    <td class="result-cell" style="background-color:#ea8d9e; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
+                  {% elif forloop.counter0 == 4 %}
+                    <td class="result-cell" style="background-color:#e3a0ef; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
+                  {% elif forloop.counter0 == 5 %}
+                    <td class="result-cell" style="background-color:#d47c8c; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
+                  {% elif forloop.counter0 == 6 %}
+                    <td class="result-cell" style="background-color:#ecd4d8; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
+                  {% elif forloop.counter0 == 7 %}
+                    <td class="result-cell" style="background-color:#FFEB3B; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
+                  {% elif forloop.counter0 == 8 %}
+                    <td class="result-cell" style="background-color:#5bbfec; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
+                  {% elif forloop.counter0 == 9 %}
+                    <td class="result-cell" style="background-color:#ffa7dc; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
+                  {% endif %}
+                {% endfor %}
+              </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+              <td colspan="10" style="font-size: larger; font-weight: bold; padding: 30px;">
+                No Record Found...!
+              </td>
+            </tr>
+          {% endif %}
+        </table>
+    </div>
+    {% endif %}
+</div>
+<footer>
+  <p style="margin-top: 0;margin-bottom: 0rem;">&copy; 2025 Playstar.in</p>
+</footer>
+<script>
+function updateTimes() {
+  const now = new Date();
+  const kolkataTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
+
+  // Format current time
+  let hour = kolkataTime.getHours();
+  const minute = kolkataTime.getMinutes();
+  const second = kolkataTime.getSeconds();
+
+  let hour12 = hour % 12;
+  hour12 = hour12 === 0 ? 12 : hour12;
+
+  const formattedHour = String(hour12).padStart(2, '0');
+  const formattedMinute = String(minute).padStart(2, '0');
+  const formattedSecond = String(second).padStart(2, '0');
+  const formattedTime = `${formattedHour}:${formattedMinute}:${formattedSecond}`;
+
+  // Update all current time fields
+  document.querySelectorAll(".currentTime").forEach(el => {
+    el.textContent = formattedTime;
+  });
+
+  // Update countdown to next draw
+  const nextDrawInput = document.querySelector(".nextDrawTime");
+  if (nextDrawInput) {
+    const nextDraw = new Date(nextDrawInput.value);
+    const diff = nextDraw - kolkataTime;
+
+    if (diff > 0) {
+      const totalSeconds = Math.floor(diff / 1000);
+      const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+      const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+      const seconds = String(totalSeconds % 60).padStart(2, '0');
+
+      document.querySelectorAll(".nextDraw").forEach(el => {
+        el.textContent = `${hours}:${minutes}:${seconds}`;
+      });
+    } else {
+      location.reload();  // Refresh after draw time
+    }
+  }
+}
+setInterval(updateTimes, 1000);
+updateTimes();
+</script>
+<script>
+function setHistoryModeAndSubmit(mode) {
+  document.getElementById('history_mode_input').value = mode;
+  document.getElementById('mainForm').submit();
+}
+function setResultsModeAndSubmit(mode) {
+  document.getElementById('results_mode_input').value = mode;
+  document.getElementById('mainForm').submit();
+}
+
+document.getElementById("btnSingle").onclick = function () {
+  document.getElementById("show_history_input").value = "1";
+  document.getElementById("history_mode_input").value = ""; 
+  document.getElementById("mainForm").submit();
+};
+
+document.getElementById("btnTwo").onclick = function () {
+  document.getElementById("show_history_input").value = "2";
+  document.getElementById("history_mode_input").value = "";
+  document.getElementById("mainForm").submit();
+};
+
+document.getElementById("btnFull").onclick = function () {
+  document.getElementById("show_history_input").value = "3";
+  document.getElementById("history_mode_input").value = "";
+  document.getElementById("mainForm").submit();
+};
+
+function setHistoryModeAndSubmit(mode) {
+  document.getElementById('show_history_input').value = "4";  
+  document.getElementById('history_mode_input').value = mode;
+  document.getElementById('mainForm').submit();
+}
+</script>
+<script>
+function setMode() {
+  const timeInput = document.getElementById("timeInput");
+  const modeInput = document.getElementById("modeInput");
+
+  if (timeInput.value === "") {
+    if (!modeInput.value) {
+      modeInput.value = "full";
+    }
+  } else {
+    if (!modeInput.value) {
+      modeInput.value = "full";  
+    }
+  }
+}
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const buttons = document.querySelectorAll(".chartbutton");
+    buttons.forEach(button => {
+      button.addEventListener("click", function () {
+        const start = parseInt(this.dataset.chartNumber);
+        const end = start + 10;
+
+
+        for (let col = 0; col < 10; col++) {
+          const show = (col >= start / 10 && col < end / 10);
+          const headerCell = document.querySelector(`.chart-column.chart${col}`);
+          if (headerCell) {
+            headerCell.style.display = show ? "table-cell" : "none";
+          }
+          const bodyCells = document.querySelectorAll(`.chart-column.valuetd.chart${col}`);
+          bodyCells.forEach(cell => {
+            cell.style.display = show ? "table-cell" : "none";
+          });
+        }
+      });
+    });
+
+    // const showHistory = "{{ show_history }}";
+    // const historyMode = "{{ history_mode }}";
+
+    // if (showHistory === "4" && historyMode === "full") {
+    //   document.getElementById("show_history_input").value = "4";
+    //   document.getElementById("history_mode_input").value = "full";
+    // }
+    // else {
+    //   document.getElementById("show_history_input").value = "3"; 
+    //   document.getElementById("history_mode_input").value = "";
+    // }
+  });
+</script>
+<script>
+  window.addEventListener('load', function () {
+    // Only auto-submit if it's a fresh page load (not from history or a back button)
+    if (!window.performance || window.performance.navigation.type === 1) {
+      // Set FULL mode explicitly (if not already in context)
+      document.getElementById('show_history_input').value = '3';
+      document.getElementById('history_mode_input').value = '';
+      document.getElementById('mainForm').submit();
+    }
+  });
+</script> 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const showHistory = "{{ show_history }}";
+  const timeSelector = document.getElementById("timeSelector");
+  const isMobile = window.innerWidth <= 768;
+
+  if (showHistory === "3") {
+    timeSelector.style.display = "none";
+
+    const hoverZones = document.querySelectorAll(".timeHoverZone");
+
+    hoverZones.forEach((zone) => {
+      if (isMobile) {
+        zone.addEventListener("click", () => {
+          timeSelector.style.display =
+            timeSelector.style.display === "block" ? "none" : "block";
+        });
+      } else {
+        zone.addEventListener("mouseenter", () => {
+          timeSelector.style.display = "block";
+        });
+        timeSelector.addEventListener("mouseleave", () => {
+          timeSelector.style.display = "none";
+        });
+      }
+    });
+  } else {
+    timeSelector.style.display = "block";
+  }
+});
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const dateInput = document.getElementById("dateInput");
+    const timeInput = document.getElementById("timeInput");
+
+    dateInput.addEventListener("change", function () {
+      document.getElementById("mainForm").submit();
+    });
+
+    timeInput.addEventListener("change", function () {
+      document.getElementById("mainForm").submit();
+    });
+  });
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const autoInputs = document.querySelectorAll(".autoSubmit");
+
+    autoInputs.forEach((element) => {
+      element.addEventListener("change", function () {
+        if (element.id === "timeInput") {
+          setMode(); 
+        }
+        document.getElementById("mainForm").submit();
+      });
+    });
+  });
+
+</script>
+<script>
+let nextDrawTimeStr = document.querySelector(".nextDrawTime").value;
+
+function showBlackScreen() {
+  const overlay = document.createElement('div');
+  overlay.style.position = "fixed";
+  overlay.style.top = 0;
+  overlay.style.left = 0;
+  overlay.style.width = "100vw";
+  overlay.style.height = "100vh";
+  overlay.style.backgroundColor = "black";
+  overlay.style.opacity = "1";
+  overlay.style.zIndex = "9999";
+  document.body.appendChild(overlay);
+  setTimeout(() => {
+    overlay.style.transition = "opacity 1s";
+    overlay.style.opacity = "0";
+    setTimeout(() => overlay.remove(), 1000);
+  }, 2000);
+}
+
+function updateCountdown(newSeconds) {
+  const countdown = document.querySelector(".nextDraw");
+  if (countdown) {
+    let minutes = Math.floor(newSeconds / 60);
+    let seconds = newSeconds % 60;
+    countdown.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
+}
+
+async function pollNextDrawTime() {
+  try {
+    const response = await fetch("{% url 'next_draw_time_api' %}");
+    const data = await response.json();
+
+    if (data.next_draw_time_str) {
+      if (data.next_draw_time_str !== nextDrawTimeStr) {
+        // It changed → show black screen and reload ONCE
+        showBlackScreen();
+        setTimeout(() => location.reload(), 2000);
+        // STOP here! Don't update local variable (so after reload it's correct)
+        return;
+      }
+
+      // Only update countdown if no change
+      updateCountdown(data.total_seconds);
+    }
+  } catch (error) {
+    console.error("Polling error:", error);
+  }
+}
+
+setInterval(pollNextDrawTime, 5000);
+</script>
+
+</body>
+</html>
+

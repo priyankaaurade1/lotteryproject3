@@ -1,0 +1,193 @@
+{% extends 'lottery/base_adminpanel.html' %}
+
+{% block content %}
+<style>
+td {
+  padding: 4px;
+  text-align: center;
+  font-weight: bold;
+  font-size: x-large;
+}
+
+.scrollable-container {
+  max-height: 85vh;  
+  overflow-y: auto;
+  padding-right: 10px;
+  border: 1px solid #ccc;
+  margin-top: 10px;
+}
+</style>
+<style>
+.table>:not(caption)>*>* {
+    padding: 0.25rem 0.4rem !important; 
+}
+</style>
+<h2 class="text-center">All Previous Results</h2>
+<form method="post" id="historyForm" 
+      class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4" 
+      style="width: 100%; font-size: 18px; font-weight: bold;">
+  {% csrf_token %}
+  <div class="d-flex align-items-center">
+    Time: <span id="currentTime" class="ms-1">--:--:--</span>
+  </div>
+  <div class="d-flex flex-wrap align-items-center justify-content-center gap-3">
+    <div class="d-flex align-items-center gap-2">
+      <label class="mb-0">Select Date:</label>
+      <input type="date" name="date" value="{{ selected_date }}" class="autoSubmit" 
+             style="font-weight: bold; font-size: 16px; width: 140px; padding: 4px;">
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <label class="mb-0">Select Time:</label>
+      <select name="time" class="autoSubmit" 
+              style="font-weight: bold; font-size: 16px; width: 140px; padding: 4px;">
+        <option {% if not selected_time or selected_time == "All Times" %}selected{% endif %}>All Times</option>
+        {% for slot in time_slots %}
+          <option value="{{ slot }}" {% if slot == selected_time %}selected{% endif %}>{{ slot }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="d-flex align-items-center">
+    <input type="hidden" id="nextDrawTime" value="{{ next_draw_time_str }}">
+    Left Time: <span id="nextDraw" class="ms-1">--:--:--</span>
+  </div>
+</form>
+{% if no_results %}
+  <div class="alert alert-warning text-center mt-3">
+    No Record found
+  </div>
+{% endif %}
+
+<div class="scrollable-container">
+  {% for group in result_tables %}
+    <h5 class="text-center" style="font-size: 1.50rem;">
+      {{ group.date }} - {{ group.time_slot }}
+    </h5>
+
+    <table class="table table-bordered text-center" style="margin-bottom: 0rem;">
+      {% for row in group.table %}
+      <tr>
+        {% for cell in row %}
+        <td style=" background-color: 
+          {% if forloop.counter0 == 0 %}#FFD700
+          {% elif forloop.counter0 == 1 %}#DDA0DD
+          {% elif forloop.counter0 == 2 %}#90EE90
+          {% elif forloop.counter0 == 3 %}#FFB6C1
+          {% elif forloop.counter0 == 4 %}#CD5C5C
+          {% elif forloop.counter0 == 5 %}#F5DEB3
+          {% elif forloop.counter0 == 6 %}#ADD8E6
+          {% elif forloop.counter0 == 7 %}#FFC0CB
+          {% elif forloop.counter0 == 8 %}#87CEEB
+          {% elif forloop.counter0 == 9 %}#FFA07A
+          {% endif %};">
+          {% if cell %}
+            {{ cell.number }}
+          {% else %}
+            ----
+          {% endif %}
+        </td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </table>
+  {% endfor %}
+</div>
+<script>
+function updateTimes() {
+  const now = new Date();
+  const kolkataTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
+
+  const currentTimeElem = document.getElementById("currentTime");
+  if (currentTimeElem) {
+    const hours = kolkataTime.getHours();
+    const minutes = kolkataTime.getMinutes();
+    const seconds = kolkataTime.getSeconds();
+    const hour12 = hours % 12 || 12;
+    const ampm = hours >= 12 ? "PM" : "AM";
+    currentTimeElem.textContent =
+      `${String(hour12).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')} ${ampm}`;
+  }
+
+  const nextDrawInput = document.getElementById("nextDrawTime");
+  const nextDrawElem = document.getElementById("nextDraw");
+
+  if (!nextDrawInput || !nextDrawElem) return;
+
+  let nextDraw = new Date(nextDrawInput.value);
+  let diff = nextDraw - kolkataTime;
+
+  // If nextDraw time already passed (e.g. after 9:30 PM), set countdown to next day 9:00 AM
+  if (diff <= 0) {
+    const tomorrow9am = new Date(kolkataTime);
+    tomorrow9am.setDate(tomorrow9am.getDate() + 1);
+    tomorrow9am.setHours(9, 0, 0, 0);
+    diff = tomorrow9am - kolkataTime;
+    location.reload();
+    return;
+  }
+
+  if (diff > 0) {
+    const totalSeconds = Math.floor(diff / 1000);
+    const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+    const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+    const s = String(totalSeconds % 60).padStart(2, '0');
+    nextDrawElem.textContent = `${h}:${m}:${s}`;
+  } else {
+    nextDrawElem.textContent = "00:00:00";
+  }
+}
+setInterval(updateTimes, 1000);
+updateTimes();
+</script>
+<script>
+  document.querySelectorAll(".autoSubmit").forEach(el => {
+    el.addEventListener("change", () => {
+      document.getElementById("historyForm").submit();
+    });
+  });
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  let nextDrawTimeStr = document.getElementById('nextDrawTime')?.value;
+
+  async function pollNextDrawTime() {
+    try {
+      const response = await fetch("{% url 'next_draw_time_api' %}");
+      const data = await response.json();
+
+      if (!data.next_draw_time_str) return;
+
+      if (data.next_draw_time_str !== nextDrawTimeStr) {
+        // New postponed time detected! Reload to reflect new countdown
+        location.reload();
+        return;
+      }
+
+      // Otherwise just update countdown
+      updateCountdownDisplay(data.total_seconds);
+    } catch (error) {
+      console.error('Error polling next draw time:', error);
+    }
+  }
+
+  function updateCountdownDisplay(totalSeconds) {
+    const countdownEl = document.getElementById('nextDraw');
+    if (!countdownEl) return;
+
+    if (totalSeconds <= 0) {
+      location.reload();
+      return;
+    }
+
+    const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+    const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+    const s = String(totalSeconds % 60).padStart(2, '0');
+    countdownEl.textContent = `${h}:${m}:${s}`;
+  }
+
+  setInterval(pollNextDrawTime, 5000);
+  pollNextDrawTime();
+});
+</script>
+
+{% endblock %}
