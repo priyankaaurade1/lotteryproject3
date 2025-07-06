@@ -1,10 +1,12 @@
 {% load static %}
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Playstar</title>
+  <title>Mainslott Replica</title>
   <!-- <link rel="stylesheet" href="{% static 'style.css' %}"> -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -54,10 +56,7 @@ footer {
     margin: 0px auto;
     background-color: #FFA7DC;
     background-image: linear-gradient(to bottom right, #c494d8);
-    padding-left: 4%;
-    padding-right: 4%;
-    padding-bottom: 20px;
-    font-family: "Times new Roman" !important;
+    padding-bottom: 5px;
 }
 td{
     text-align: -webkit-center;
@@ -83,6 +82,38 @@ td{
     font-size: 30px !important;
     font-weight: bold;
   }
+
+  @media screen and (max-width: 358px) {
+    .smaller-mobile {
+      gap: 0rem !important;
+    }
+  }
+
+  @media (max-width: 336px) {
+  .smaller-mobile {
+    gap: 0 !important;
+    justify-content: space-around !important;
+    padding: 0 2px !important;
+  }
+
+  .smaller-mobile .text-label-mini {
+    font-size: 9px !important;
+    line-height: 1.1 !important;
+  }
+
+  .smaller-mobile .main-title-mini {
+    font-size: 12px !important;
+  }
+
+  .smaller-mobile .btn-outline-primary {
+    padding: 2px 5px !important;
+  }
+
+  .small-block {
+    min-width: 32% !important;
+  }
+}
+
 
   /* Mobile view ≤576px */
   @media screen and (max-width: 576px) {
@@ -119,7 +150,7 @@ td{
   /* NEW: Medium desktop (992–1400px) - Make it smaller to fit better */
   @media screen and (min-width: 992px) and (max-width: 1400px) {
     .text-label {
-      font-size: 18px !important;
+      font-size: 19px !important;
       font-weight: 600;
     }
     .main-title {
@@ -195,27 +226,11 @@ td{
     margin: 0 !important;
     padding: 0 !important;
   }
-</style>
-<style>
-.small-labels > div {
-  margin: 0;
-  padding: 0 4px;
-  font-weight: 600;
-  white-space: nowrap;
-  font-size: 28px;
+  .timeHoverZone {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 
-.small-labels button {
-  margin: 0 4px;
-}
-
-.main-title {
-  font-size: 18px;
-  font-weight: bold;
-}
-.gap-2 {
-    gap: 3.5rem !important;
-}
 </style>
 </head>
 <body>
@@ -224,35 +239,38 @@ td{
   <marquee behavior="" direction="" style="font-size: larger;">
       Note :- All the information here is based on Numeric astrology is not related to any type of gambling. Viewing this website is on your own risk. We are not responsible for any issue or scam. We respect all country rules and laws. If you not agree with our site, please quit our site right now..!!
   </marquee>
-  <div class="head container-fluid bg-light py-1 px-2" >
+  <div class="head container-fluid bg-light " >
     <!-- desktop view -->
-    <div class="row text-center align-items-center py-2">
-      <div class="col d-flex flex-wrap justify-content-center align-items-center gap-2 small-labels">
-        <div>Time: <span class="currentTime">--:--:--</span></div>
-        <div>Date: <span>{{ formatted_date }}</span></div>
-        <div><strong class="main-title">Playstar</strong></div>
-        <button type="button" class="btn btn-outline-primary btn-sm p-1" onclick="location.reload();" title="Refresh">
-          <i class="bi bi-arrow-clockwise"></i>
+    <div class="row align-items-center text-center d-none d-lg-flex">
+      <div class="col-md-5 d-flex justify-content-start align-items-center" style="font-weight: 600;">
+        <div class="text-label me-4">Time: <span class="currentTime">--:--:--</span></div>
+        <div class="text-label">Date: <span>{{ formatted_date }}</span></div>
+      </div>
+      <div class="timeHoverZone col-md-2 d-flex justify-content-center align-items-center px-0">
+        <strong class="main-title">MainsLott</strong>
+        <button type="button" class="btn btn-outline-primary p-1" onclick="window.location.href = window.location.href;" title="Refresh">
+          <i class="bi bi-arrow-clockwise" style="font-size: 18px;"></i>
         </button>
-        <div>Draw Time: <span>{{ selected_time }}</span></div>
-        <div>Next Draw: <span class="nextDraw">--:--:--</span></div>
+      </div>
+      <div class="col-md-5 d-flex justify-content-end align-items-center" style="font-weight: 600;">
+        <div class="text-label me-4">Draw Time: <span>{{ selected_time }}</span></div>
+        <div class="text-label">Next Draw: <span class="nextDraw">--:--:--</span></div>
         <input type="hidden" class="nextDrawTime" value="{{ next_draw_time_str }}">
       </div>
     </div>
-
     <!-- mobile view -->
-    <div class="d-flex d-lg-none flex-row flex-wrap justify-content-between align-items-center text-center gap-2">
-      <div class="d-flex flex-column align-items-start small-block">
+    <div class="d-flex d-lg-none flex-row flex-wrap justify-content-between align-items-center text-center gap-2 smaller-mobile">
+      <div class="d-flex flex-column align-items-start small-block" style="font-weight: 600;">
         <div class="text-label-mini">Time: <span class="currentTime">--:--:--</span></div>
         <div class="text-label-mini">Date: <span>{{ formatted_date }}</span></div>
       </div>
-      <div class="d-flex flex-row align-items-center small-block">
-        <strong class="timeHoverZone main-title-mini">Playstar</strong>
-        <button type="button" class="btn btn-outline-primary p-1" onclick="location.reload();" title="Refresh">
+      <div class="d-flex flex-row align-items-center gap-1 small-block" style="font-weight: 600;">
+        <strong class="timeHoverZone main-title-mini">MainsLott</strong>
+        <button type="button" class="btn btn-outline-primary p-1" onclick="window.location.href = window.location.href;" title="Refresh">
           <i class="bi bi-arrow-clockwise" style="font-size: 16px;"></i>
         </button>
       </div>
-      <div class="d-flex flex-column align-items-end small-block">
+      <div class="d-flex flex-column align-items-end small-block" style="font-weight: 600;">
         <div class="text-label-mini">Draw Time: <span>{{ selected_time }}</span></div>
         <div class="text-label-mini">Next Draw: <span class="nextDraw">--:--:--</span></div>
         <input type="hidden" class="nextDrawTime" value="{{ next_draw_time_str }}">
@@ -355,7 +373,7 @@ td{
           {% if history_data %}
             {% for slot, rows in history_data %}
                 <div class="result-heading d-flex justify-content-between align-items-center px-2" style=" font-weight: bold;">
-                  <div>Playstar</div>
+                  <div>MainsLott</div>
                   <div>{{ slot }}</div>
                   <div>{{ selected_date_display }}</div>
                 </div>
@@ -459,7 +477,7 @@ td{
         <!-- single & two historydata -->
         {% for label, grid in history_data %}
             <div class="result-heading d-flex justify-content-between align-items-center px-3" style="font-weight: bold;">
-              <div>Playstar</div>
+              <div>MainsLott</div>
               <div>{{ label }}</div>
               <div>{{ selected_date_display }}</div>
             </div>
@@ -557,7 +575,7 @@ td{
     {% endif %}
 </div>
 <footer>
-  <p style="margin-top: 0;margin-bottom: 0rem;">&copy; 2025 Playstar.in</p>
+  <p style="margin-top: 0;margin-bottom: 0rem;">&copy; 2025 Mainslott.in</p>
 </footer>
 <script>
 function updateTimes() {
@@ -819,4 +837,3 @@ setInterval(pollNextDrawTime, 5000);
 
 </body>
 </html>
-
