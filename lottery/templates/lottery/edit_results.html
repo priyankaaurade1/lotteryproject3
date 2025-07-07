@@ -42,38 +42,47 @@ button {
   </form>
 {% endif %} -->
 
-<div class="d-flex justify-content-between align-items-center px-3 py-2" style="font-size: 28px; font-weight: 600; background-color: #f1f1f1; border-radius: 8px; flex-wrap: wrap;">
-  <div class="me-3">
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 px-3 py-2"
+     style="font-size: 1.2rem; font-weight: 600; background-color: #f1f1f1; border-radius: 8px;">
+  
+  <!-- Time Display -->
+  <div class="flex-grow-1" style="min-width: 120px;">
     Time: <span id="currentTime">--:--:--</span>
   </div>
-  <form method="POST" id="autoSubmitForm" class="d-flex align-items-center gap-3 mb-0 mx-2">
-  {% csrf_token %}
-  <div class="d-flex align-items-center gap-1">
-    <label class="mb-0" style="white-space: nowrap;">Select Date:</label>
-    <input type="date" name="date" value="{{ selected_date|default:'' }}"
-           class="form-control form-control-sm" style="font-size: 1.2rem;"
-           onchange="document.getElementById('autoSubmitForm').submit()">
-  </div>
 
-  <div class="d-flex align-items-center gap-1">
-    <label class="mb-0" style="white-space: nowrap;">Draw Time:</label>
-    <select name="time_slot" class="form-control form-control-sm" style="font-size: 1.2rem;"
-            onchange="document.getElementById('autoSubmitForm').submit()">
-      {% for slot in all_slots %}
-        {% if selected_date != today or slot > current_time %}
-          <option value="{{ slot }}" {% if slot == selected_slot %}selected{% endif %}>
-            {{ slot }}
-          </option>
-        {% endif %}
-      {% endfor %}
-    </select>
+  <!-- Date & Time Form -->
+  <form method="POST" id="autoSubmitForm" class="d-flex flex-wrap align-items-center gap-2 mb-0">
+    {% csrf_token %}
+    
+    <!-- Date -->
+    <div class="d-flex align-items-center gap-1" style="min-width: 160px;">
+      <label class="mb-0" style="white-space: nowrap;">Date:</label>
+      <input type="date" name="date" value="{{ selected_date|default:'' }}"
+             class="form-control form-control-sm" style="font-size: 1rem; max-width: 140px;"
+             onchange="document.getElementById('autoSubmitForm').submit()">
+    </div>
+
+    <!-- Time -->
+    <div class="d-flex align-items-center gap-1" style="min-width: 180px;">
+      <label class="mb-0" style="white-space: nowrap;">Draw Time:</label>
+      <select name="time_slot" class="form-control form-control-sm" style="font-size: 1rem; max-width: 140px;"
+              onchange="document.getElementById('autoSubmitForm').submit()">
+        {% for slot in all_slots %}
+          {% if selected_date != today or slot > current_time %}
+            <option value="{{ slot }}" {% if slot == selected_slot %}selected{% endif %}>{{ slot }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </div>
+  </form>
+
+  <!-- Countdown -->
+  <div class="flex-grow-1 text-end" style="min-width: 140px;">
+    <input type="hidden" id="nextDrawTime" value="{{ next_draw_time_str }}">
+    Left Time: <span id="nextDraw">--:--:--</span>
   </div>
-</form>
-<div class="ms-3">
-  <input type="hidden" id="nextDrawTime" value="{{ next_draw_time_str }}">
-  Left Time: <span id="nextDraw">--:--:--</span>
 </div>
-</div>
+
 <form method="POST" action="{% url 'update_all_results' %}">
   {% csrf_token %}
 
@@ -84,16 +93,16 @@ button {
       <tr>
         {% for cell in row %}
         <td style="background-color:
-          {% if forloop.counter0 == 0 %}#FFD700
-          {% elif forloop.counter0 == 1 %}#DDA0DD
-          {% elif forloop.counter0 == 2 %}#90EE90
-          {% elif forloop.counter0 == 3 %}#FFB6C1
-          {% elif forloop.counter0 == 4 %}#CD5C5C
-          {% elif forloop.counter0 == 5 %}#F5DEB3
-          {% elif forloop.counter0 == 6 %}#ADD8E6
-          {% elif forloop.counter0 == 7 %}#FFC0CB
-          {% elif forloop.counter0 == 8 %}#87CEEB
-          {% elif forloop.counter0 == 9 %}#FFA07A
+           {% if forloop.counter0 == 0 %}#cdb4db
+          {% elif forloop.counter0 == 1 %}#ffc8dd
+          {% elif forloop.counter0 == 2 %}#ffafcc
+          {% elif forloop.counter0 == 3 %}#bde0fe
+          {% elif forloop.counter0 == 4 %}#a2d2ff
+          {% elif forloop.counter0 == 5 %}#cdb4db
+          {% elif forloop.counter0 == 6 %}#ffc8dd
+          {% elif forloop.counter0 == 7 %}#ffafcc
+          {% elif forloop.counter0 == 8 %}#bde0fe
+          {% elif forloop.counter0 == 9 %}#a2d2ff
           {% endif %};">
 
           {% if cell %}
@@ -120,7 +129,7 @@ button {
 
   <div class="text-center mt-3">
     {% if is_editable %}
-      <button type="submit" class="btn btn-primary">Update</button>
+      <button type="submit" class="btn btn-primary" style="background: #1e1e2f;">Update</button>
     {% else %}
       <button type="button" class="btn btn-secondary" disabled>Cannot Edit Past Results</button>
     {% endif %}
@@ -131,6 +140,7 @@ function updateTimes() {
   const now = new Date();
   const kolkataTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
 
+  // Update Current Time
   const currentTimeElem = document.getElementById("currentTime");
   if (currentTimeElem) {
     const hours = kolkataTime.getHours();
@@ -142,6 +152,7 @@ function updateTimes() {
       `${String(hour12).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')} ${ampm}`;
   }
 
+  // Countdown to next draw
   const nextDrawInput = document.getElementById("nextDrawTime");
   const nextDrawElem = document.getElementById("nextDraw");
 
@@ -150,25 +161,19 @@ function updateTimes() {
   let nextDraw = new Date(nextDrawInput.value);
   let diff = nextDraw - kolkataTime;
 
-  // If nextDraw time already passed (e.g. after 9:30 PM), set countdown to next day 9:00 AM
   if (diff <= 0) {
-    const tomorrow9am = new Date(kolkataTime);
-    tomorrow9am.setDate(tomorrow9am.getDate() + 1);
-    tomorrow9am.setHours(9, 0, 0, 0);
-    diff = tomorrow9am - kolkataTime;
+    // Time's up — reload to get next draw time from server
     location.reload();
+    return;
   }
 
-  if (diff > 0) {
-    const totalSeconds = Math.floor(diff / 1000);
-    const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
-    const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
-    const s = String(totalSeconds % 60).padStart(2, '0');
-    nextDrawElem.textContent = `${h}:${m}:${s}`;
-  } else {
-    nextDrawElem.textContent = "00:00:00";
-  }
+  const totalSeconds = Math.floor(diff / 1000);
+  const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+  const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+  const s = String(totalSeconds % 60).padStart(2, '0');
+  nextDrawElem.textContent = `${h}:${m}:${s}`;
 }
+
 setInterval(updateTimes, 1000);
 updateTimes();
 </script>

@@ -199,9 +199,7 @@ td{
     font-weight: bold;
     padding: 4px;
   }
-  .result-heading{
-    font-size: 20px;
-  } 
+  
   @media (min-width: 576px) {
     .result-cell {
       font-size: 22px;
@@ -336,25 +334,25 @@ td{
               </th>
               {% for cell in row %}
                 {% if forloop.counter0 == 0 %}
-                  <td class="result-cell" style="background-color:#FFEB3B; font-weight:bold;" align="center">
+                  <td class="result-cell" style="background-color:#cdb4db; font-weight:bold;" align="center">
                 {% elif forloop.counter0 == 1 %}
-                  <td class="result-cell" style="background-color:#ecd4d8; font-weight:bold;" align="center">
+                  <td class="result-cell" style="background-color:#ffc8dd; font-weight:bold;" align="center">
                 {% elif forloop.counter0 == 2 %}
-                  <td class="result-cell" style="background-color:#85d825; font-weight:bold;" align="center">
+                  <td class="result-cell" style="background-color:#ffafcc; font-weight:bold;" align="center">
                 {% elif forloop.counter0 == 3 %}
-                  <td class="result-cell" style="background-color:#ea8d9e; font-weight:bold;" align="center">
+                  <td class="result-cell" style="background-color:#bde0fe; font-weight:bold;" align="center">
                 {% elif forloop.counter0 == 4 %}
-                  <td class="result-cell" style="background-color:#e3a0ef; font-weight:bold;" align="center">
+                  <td class="result-cell" style="background-color:#a2d2ff; font-weight:bold;" align="center">
                 {% elif forloop.counter0 == 5 %}
-                  <td class="result-cell" style="background-color:#d47c8c; font-weight:bold;" align="center">
+                  <td class="result-cell" style="background-color:#cdb4db; font-weight:bold;" align="center">
                 {% elif forloop.counter0 == 6 %}
-                  <td class="result-cell" style="background-color:#ecd4d8; font-weight:bold;" align="center">
+                  <td class="result-cell" style="background-color:#ffc8dd; font-weight:bold;" align="center">
                 {% elif forloop.counter0 == 7 %}
-                  <td class="result-cell" style="background-color:#FFEB3B; font-weight:bold;" align="center">
+                  <td class="result-cell" style="background-color:#ffafcc; font-weight:bold;" align="center">
                 {% elif forloop.counter0 == 8 %}
-                  <td class="result-cell" style="background-color:#5bbfec; font-weight:bold;" align="center">
+                  <td class="result-cell" style="background-color:#bde0fe; font-weight:bold;" align="center">
                 {% elif forloop.counter0 == 9 %}
-                  <td class="result-cell" style="background-color:#ffa7dc; font-weight:bold;" align="center">
+                  <td class="result-cell" style="background-color:#a2d2ff; font-weight:bold;" align="center">
                 {% else %}
                   <td>
                 {% endif %}
@@ -383,25 +381,25 @@ td{
                     <tr>
                       {% for cell in row %}
                         {% if forloop.counter0 == 0 %}
-                          <td class="result-cell" style="background-color:#FFEB3B; font-weight:bold;" align="center">
+                          <td class="result-cell" style="background-color:#cdb4db; font-weight:bold;" align="center">
                         {% elif forloop.counter0 == 1 %}
-                          <td class="result-cell" style="background-color:#ecd4d8; font-weight:bold;" align="center">
+                          <td class="result-cell" style="background-color:#ffc8dd; font-weight:bold;" align="center">
                         {% elif forloop.counter0 == 2 %}
-                          <td class="result-cell" style="background-color:#85d825; font-weight:bold;" align="center">
+                          <td class="result-cell" style="background-color:#ffafcc; font-weight:bold;" align="center">
                         {% elif forloop.counter0 == 3 %}
-                          <td class="result-cell" style="background-color:#ea8d9e; font-weight:bold;" align="center">
+                          <td class="result-cell" style="background-color:#bde0fe; font-weight:bold;" align="center">
                         {% elif forloop.counter0 == 4 %}
-                          <td class="result-cell" style="background-color:#e3a0ef; font-weight:bold;" align="center">
+                          <td class="result-cell" style="background-color:#a2d2ff; font-weight:bold;" align="center">
                         {% elif forloop.counter0 == 5 %}
-                          <td class="result-cell" style="background-color:#d47c8c; font-weight:bold;" align="center">
+                          <td class="result-cell" style="background-color:#cdb4db; font-weight:bold;" align="center">
                         {% elif forloop.counter0 == 6 %}
-                          <td class="result-cell" style="background-color:#ecd4d8; font-weight:bold;" align="center">
+                          <td class="result-cell" style="background-color:#ffc8dd; font-weight:bold;" align="center">
                         {% elif forloop.counter0 == 7 %}
-                          <td class="result-cell" style="background-color:#FFEB3B; font-weight:bold;" align="center">
+                          <td class="result-cell" style="background-color:#ffafcc; font-weight:bold;" align="center">
                         {% elif forloop.counter0 == 8 %}
-                          <td class="result-cell" style="background-color:#5bbfec; font-weight:bold;" align="center">
+                          <td class="result-cell" style="background-color:#bde0fe; font-weight:bold;" align="center">
                         {% elif forloop.counter0 == 9 %}
-                          <td class="result-cell" style="background-color:#ffa7dc; font-weight:bold;" align="center">
+                          <td class="result-cell" style="background-color:#a2d2ff; font-weight:bold;" align="center">
                         {% else %}
                           <td>
                         {% endif %}
@@ -446,25 +444,25 @@ td{
                   <td class="result-cell" style="background-color: #131a3e;color: white;border: 1px solid white;">{{ time_label }}</td>
                   {% for value in row %}
                     {% if forloop.counter0 == 0 %}
-                      <td class="result-cell" style="background-color:#FFEB3B; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
+                      <td class="result-cell" style="background-color:#cdb4db; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
                     {% elif forloop.counter0 == 1 %}
-                      <td class="result-cell" style="background-color:#ecd4d8; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
+                      <td class="result-cell" style="background-color:#ffc8dd; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
                     {% elif forloop.counter0 == 2 %}
-                      <td class="result-cell" style="background-color:#85d825; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
+                      <td class="result-cell" style="background-color:#ffafcc; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
                     {% elif forloop.counter0 == 3 %}
-                      <td class="result-cell" style="background-color:#ea8d9e; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
+                      <td class="result-cell" style="background-color:#bde0fe; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
                     {% elif forloop.counter0 == 4 %}
-                      <td class="result-cell" style="background-color:#e3a0ef; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
+                      <td class="result-cell" style="background-color:#a2d2ff; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
                     {% elif forloop.counter0 == 5 %}
-                      <td class="result-cell" style="background-color:#d47c8c; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
+                      <td class="result-cell" style="background-color:#cdb4db; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
                     {% elif forloop.counter0 == 6 %}
-                      <td class="result-cell" style="background-color:#ecd4d8; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
+                      <td class="result-cell" style="background-color:#ffc8dd; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
                     {% elif forloop.counter0 == 7 %}
-                      <td class="result-cell" style="background-color:#FFEB3B; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
+                      <td class="result-cell" style="background-color:#ffafcc; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
                     {% elif forloop.counter0 == 8 %}
-                      <td class="result-cell" style="background-color:#5bbfec; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
+                      <td class="result-cell" style="background-color:#bde0fe; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
                     {% elif forloop.counter0 == 9 %}
-                      <td class="result-cell" style="background-color:#ffa7dc; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
+                      <td class="result-cell" style="background-color:#a2d2ff; font-weight:bold;" align="center">{{ value|default:"--" }}</td>
                     {% else %}
                       <td>{{ value|default:"--" }}</td>
                     {% endif %}
@@ -476,13 +474,12 @@ td{
         {% else %}
         <!-- single & two historydata -->
         {% for label, grid in history_data %}
-            <div class="result-heading d-flex justify-content-between align-items-center px-3" style="font-weight: bold;">
+            <div class="result-heading d-flex justify-content-between align-items-center px-2" style=" font-weight: bold;">
               <div>Playstar</div>
               <div>{{ label }}</div>
               <div>{{ selected_date_display }}</div>
             </div>
-            <div>
-              <table class="result-cell table table-bordered text-center" style="font-weight:bold;border: 1px solid black;">
+              <table class="result-cell table table-bordered text-center" style="margin-bottom: 0px;font-weight:bold;border: 1px solid black;">
                 <thead class="result-cell" style="background-color: #131a3e;color: white;border: 1px solid white;">
                   <tr>
                     <th class="result-cell" style="background-color: #131a3e;color: white;border: 1px solid white;"></th>
@@ -499,25 +496,25 @@ td{
                       </th>
                       {% for cell in row %}
                         {% if forloop.counter0 == 0 %}
-                          <td class="result-cell" style="background-color:#FFEB3B; font-weight:bold;" align="center">
+                          <td class="result-cell" style="background-color:#cdb4db; font-weight:bold;" align="center">
                         {% elif forloop.counter0 == 1 %}
-                          <td class="result-cell" style="background-color:#ecd4d8; font-weight:bold;" align="center">
+                          <td class="result-cell" style="background-color:#ffc8dd; font-weight:bold;" align="center">
                         {% elif forloop.counter0 == 2 %}
-                          <td class="result-cell" style="background-color:#85d825; font-weight:bold;" align="center">
+                          <td class="result-cell" style="background-color:#ffafcc; font-weight:bold;" align="center">
                         {% elif forloop.counter0 == 3 %}
-                          <td class="result-cell" style="background-color:#ea8d9e; font-weight:bold;" align="center">
+                          <td class="result-cell" style="background-color:#bde0fe; font-weight:bold;" align="center">
                         {% elif forloop.counter0 == 4 %}
-                          <td class="result-cell" style="background-color:#e3a0ef; font-weight:bold;" align="center">
+                          <td class="result-cell" style="background-color:#a2d2ff; font-weight:bold;" align="center">
                         {% elif forloop.counter0 == 5 %}
-                          <td class="result-cell" style="background-color:#d47c8c; font-weight:bold;" align="center">
+                          <td class="result-cell" style="background-color:#cdb4db; font-weight:bold;" align="center">
                         {% elif forloop.counter0 == 6 %}
-                          <td class="result-cell" style="background-color:#ecd4d8; font-weight:bold;" align="center">
+                          <td class="result-cell" style="background-color:#ffc8dd; font-weight:bold;" align="center">
                         {% elif forloop.counter0 == 7 %}
-                          <td class="result-cell" style="background-color:#FFEB3B; font-weight:bold;" align="center">
+                          <td class="result-cell" style="background-color:#ffafcc; font-weight:bold;" align="center">
                         {% elif forloop.counter0 == 8 %}
-                          <td class="result-cell" style="background-color:#5bbfec; font-weight:bold;" align="center">
+                          <td class="result-cell" style="background-color:#bde0fe; font-weight:bold;" align="center">
                         {% elif forloop.counter0 == 9 %}
-                          <td class="result-cell" style="background-color:#ffa7dc; font-weight:bold;" align="center">
+                          <td class="result-cell" style="background-color:#a2d2ff; font-weight:bold;" align="center">
                         {% else %}
                           <td>
                         {% endif %}
@@ -528,7 +525,6 @@ td{
                   {% endfor %}
                 </tbody>
               </table>
-            </div>
           {% endfor %}
       {% endif %}
     {% else %}
@@ -540,25 +536,25 @@ td{
               <tr>
                 {% for cell in row %}
                   {% if forloop.counter0 == 0 %}
-                    <td class="result-cell" style="background-color:#FFEB3B; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
+                    <td class="result-cell" style="background-color:#cdb4db; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
                   {% elif forloop.counter0 == 1 %}
-                    <td class="result-cell" style="background-color:#ecd4d8; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
+                    <td class="result-cell" style="background-color:#ffc8dd; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
                   {% elif forloop.counter0 == 2 %}
-                    <td class="result-cell" style="background-color:#85d825; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
+                    <td class="result-cell" style="background-color:#ffafcc; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
                   {% elif forloop.counter0 == 3 %}
-                    <td class="result-cell" style="background-color:#ea8d9e; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
+                    <td class="result-cell" style="background-color:#bde0fe; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
                   {% elif forloop.counter0 == 4 %}
-                    <td class="result-cell" style="background-color:#e3a0ef; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
+                    <td class="result-cell" style="background-color:#a2d2ff; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
                   {% elif forloop.counter0 == 5 %}
-                    <td class="result-cell" style="background-color:#d47c8c; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
+                    <td class="result-cell" style="background-color:#cdb4db; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
                   {% elif forloop.counter0 == 6 %}
-                    <td class="result-cell" style="background-color:#ecd4d8; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
+                    <td class="result-cell" style="background-color:#ffc8dd; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
                   {% elif forloop.counter0 == 7 %}
-                    <td class="result-cell" style="background-color:#FFEB3B; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
+                    <td class="result-cell" style="background-color:#ffafcc; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
                   {% elif forloop.counter0 == 8 %}
-                    <td class="result-cell" style="background-color:#5bbfec; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
+                    <td class="result-cell" style="background-color:#bde0fe; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
                   {% elif forloop.counter0 == 9 %}
-                    <td class="result-cell" style="background-color:#ffa7dc; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
+                    <td class="result-cell" style="background-color:#a2d2ff; font-weight:bold;" align="center">{{ cell.number|default:"--" }}</td>
                   {% endif %}
                 {% endfor %}
               </tr>
@@ -575,7 +571,7 @@ td{
     {% endif %}
 </div>
 <footer>
-  <p style="margin-top: 0;margin-bottom: 0rem;">&copy; 2025 playstar.com</p>
+  <p style="margin-top: 0;margin-bottom: 0rem;">&copy; 2025 playstar.live</p>
 </footer>
 <script>
 function updateTimes() {
