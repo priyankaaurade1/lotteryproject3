@@ -333,20 +333,18 @@ def get_next_draw_time(now):
 def next_draw_time_api(request):
     now = timezone.localtime()
     offset = DrawOffset.get_offset()
-
     next_draw_time = get_next_draw_time(now)
     if not next_draw_time:
         return JsonResponse({
             'next_draw_time_str': '',
             'total_seconds': 0,
         })
-
+    # Add 30 second offset for display
+    next_draw_time += timedelta(seconds=30)
     # Compute remaining seconds from now
     total_seconds = max(0, int((next_draw_time + offset - now).total_seconds()))
-
     print("OFFSET:", offset)
     print("NEXT DRAW:", next_draw_time)
-
     return JsonResponse({
         'next_draw_time_str': next_draw_time.strftime("%Y-%m-%dT%H:%M:%S"),
         'total_seconds': total_seconds,
@@ -354,8 +352,8 @@ def next_draw_time_api(request):
 
 def index(request):
     now = timezone.localtime()
-    slot = get_last_time_slot(now)  # <<< ADDED
-    current_slot_time = slot.time().strftime('%I:%M %p')  # <<< FIXED
+    slot = get_last_time_slot(now)  
+    current_slot_time = slot.time().strftime('%I:%M %p') 
 
     today = now.date()
     time_slots = []
@@ -537,6 +535,8 @@ def index(request):
     # --- Next Draw Countdown ---
     next_draw_time = get_next_draw_time(now)
     if next_draw_time:
+        # Add 30 second offset for display
+        next_draw_time += timedelta(seconds=30)
         time_diff = next_draw_time - now
         total_seconds = int(time_diff.total_seconds())
         hours, remainder = divmod(total_seconds, 3600)

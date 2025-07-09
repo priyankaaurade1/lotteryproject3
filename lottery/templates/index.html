@@ -577,29 +577,31 @@ td{
 function updateTimes() {
   const now = new Date();
   const kolkataTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
+  // Subtract 30-second delay
+  kolkataTime.setSeconds(kolkataTime.getSeconds() - 30);
 
-  // Format current time
-  let hour = kolkataTime.getHours();
-  const minute = kolkataTime.getMinutes();
-  const second = kolkataTime.getSeconds();
+  // Update Current Time
+  const currentTimeElems = document.querySelectorAll(".currentTime");
+  if (currentTimeElems.length) {
+    const hours = kolkataTime.getHours();
+    const minutes = kolkataTime.getMinutes();
+    const seconds = kolkataTime.getSeconds();
+    const hour12 = hours % 12 || 12;
+    const ampm = hours >= 12 ? "PM" : "AM";
 
-  let hour12 = hour % 12;
-  hour12 = hour12 === 0 ? 12 : hour12;
+    const displayTime =
+      `${String(hour12).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')} ${ampm}`;
 
-  const formattedHour = String(hour12).padStart(2, '0');
-  const formattedMinute = String(minute).padStart(2, '0');
-  const formattedSecond = String(second).padStart(2, '0');
-  const formattedTime = `${formattedHour}:${formattedMinute}:${formattedSecond}`;
-
-  // Update all current time fields
-  document.querySelectorAll(".currentTime").forEach(el => {
-    el.textContent = formattedTime;
-  });
+    currentTimeElems.forEach(el => el.textContent = displayTime);
+  }
 
   // Update countdown to next draw
-  const nextDrawInput = document.querySelector(".nextDrawTime");
-  if (nextDrawInput) {
-    const nextDraw = new Date(nextDrawInput.value);
+  const nextDrawInputs = document.querySelectorAll(".nextDrawTime");
+  const nextDrawElems = document.querySelectorAll(".nextDraw");
+  if (!nextDrawInputs.length || !nextDrawElems.length) return;
+
+  nextDrawInputs.forEach((input, index) => {
+    const nextDraw = new Date(input.value);
     const diff = nextDraw - kolkataTime;
 
     if (diff > 0) {
@@ -608,13 +610,11 @@ function updateTimes() {
       const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
       const seconds = String(totalSeconds % 60).padStart(2, '0');
 
-      document.querySelectorAll(".nextDraw").forEach(el => {
-        el.textContent = `${hours}:${minutes}:${seconds}`;
-      });
+      nextDrawElems[index].textContent = `${hours}:${minutes}:${seconds}`;
     } else {
       location.reload();  // Refresh after draw time
     }
-  }
+  });
 }
 setInterval(updateTimes, 1000);
 updateTimes();
