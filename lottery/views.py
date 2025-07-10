@@ -354,13 +354,24 @@ def index(request):
     now = timezone.localtime()
     slot = get_last_time_slot(now)  
     current_slot_time = slot.time().strftime('%I:%M %p') 
-
     today = now.date()
+
+    # time_slots generation
     time_slots = []
     start = datetime.combine(today, time(9, 0))
     end = datetime.combine(today, time(21, 30))
     while start <= end:
+        if request.method == "POST":
+            selected_date = request.POST.get("date")
+            try:
+                selected_date_obj = datetime.strptime(selected_date, "%Y-%m-%d").date()
+            except:
+                selected_date_obj = today
+        else:
+            selected_date_obj = today
+        # Filter out future times if today
         time_slots.append(start.strftime('%I:%M %p'))
+
         start += timedelta(minutes=15)
 
     selected_date = request.POST.get("date")
@@ -377,7 +388,6 @@ def index(request):
         history_mode = ""
         mode = "full"
 
-    # <<< ADDED: Default selected_time to current slot if needed
     if selected_date:
         try:
             selected_date_obj = datetime.strptime(selected_date, "%Y-%m-%d").date()
@@ -409,7 +419,7 @@ def index(request):
     chart_data = []
     chart_prefix = "00"
 
-    #  if user selected -- All Times -- from dropdown and clicked submit
+    # All Times (for "full" button)
     if request.method == "POST" and request.POST.get("time") == "" and request.POST.get("mode") == "full":
         show_history = "4"
         history_mode = "full"
@@ -425,7 +435,8 @@ def index(request):
 
         for label, rows in time_slot_groups.items():
             history_data.append((label, rows))
-    if  show_history == "4":
+
+    if show_history == "4":
         raw_history = defaultdict(lambda: [[None for _ in range(10)] for _ in range(10)])
         if selected_date_obj == today:
             all_results = LotteryResult.objects.filter(
@@ -439,16 +450,19 @@ def index(request):
             time_label = result.time_slot.strftime('%I:%M %p')
             cell_value = result
             if history_mode == "single" and len(result.number) >= 3:
-                cell_value = result.number[-2]  # 2nd last digit
+                cell_value = result.number[-2]
             elif history_mode == "two":
                 cell_value = result.number[-2:]
             raw_history[time_label][result.row][result.column] = cell_value
-            # print(f"Result: {result.number}, Row: {result.row}, Column: {result.column}, Time: {time_label}")
         history_data = sorted(raw_history.items(), key=lambda x: datetime.strptime(x[0], "%I:%M %p"), reverse=True)
+
     elif show_history == "2":  # TWO
         grid = [[None for _ in range(10)] for _ in range(10)]
         if selected_time_obj:
-            results = LotteryResult.objects.filter(date=selected_date_obj, time_slot=selected_time_obj)
+            if selected_date_obj == today and selected_time_obj > current_time:
+                results = LotteryResult.objects.none()   # prevent future
+            else:
+                results = LotteryResult.objects.filter(date=selected_date_obj, time_slot=selected_time_obj)
         elif selected_date_obj == today:
             selected_time_obj = get_last_time_slot(now).time()
             selected_time = selected_time_obj.strftime('%I:%M %p')
@@ -460,10 +474,14 @@ def index(request):
         for result in results:
             if result.row < 10 and result.column < 10:
                 grid[result.row][result.column] = result.number[-2:]
+
     elif show_history == "1":  # SINGLE
         grid = [[None for _ in range(10)] for _ in range(10)]
         if selected_time_obj:
-            results = LotteryResult.objects.filter(date=selected_date_obj, time_slot=selected_time_obj)
+            if selected_date_obj == today and selected_time_obj > current_time:
+                results = LotteryResult.objects.none()   # prevent future
+            else:
+                results = LotteryResult.objects.filter(date=selected_date_obj, time_slot=selected_time_obj)
         elif selected_date_obj == today:
             selected_time_obj = get_last_time_slot(now).time()
             selected_time = selected_time_obj.strftime('%I:%M %p')
@@ -475,6 +493,7 @@ def index(request):
             if result.row < 10 and result.column < 10:
                 if len(result.number) >= 3:
                     grid[result.row][result.column] = result.number[-2]
+
     elif show_history in [None, "", "3"]:  # FULL
         grid = [[None for _ in range(10)] for _ in range(10)]
         selected_time_obj = None
@@ -488,7 +507,10 @@ def index(request):
             results = LotteryResult.objects.filter(date=selected_date_obj).order_by('time_slot')
             current_slot_label = "All Times"
         elif selected_time_obj:
-            results = LotteryResult.objects.filter(date=selected_date_obj, time_slot=selected_time_obj)
+            if selected_date_obj == today and selected_time_obj > current_time:
+                results = LotteryResult.objects.none()  # prevent future
+            else:
+                results = LotteryResult.objects.filter(date=selected_date_obj, time_slot=selected_time_obj)
             current_slot_label = selected_time
         else:
             if selected_date_obj == today:
@@ -503,6 +525,7 @@ def index(request):
         for result in results:
             if result.row < 10 and result.column < 10:
                 grid[result.row][result.column] = result
+
     if request.method == "POST":
         history_mode = request.POST.get("history_mode")
         if history_mode == "chart":
@@ -511,10 +534,8 @@ def index(request):
             chart_prefix = request.POST.get("chart_prefix") or "00"
             prefix_range_start = int(chart_prefix)
             prefix_range_end = prefix_range_start + 9
-            # Current time (local)
             now = timezone.localtime()
             current_time_only = now.time()
-            # Filter out results for future time slots
             all_results = LotteryResult.objects.filter(
                 date=selected_date_obj,
                 time_slot__lte=current_time_only
@@ -532,10 +553,9 @@ def index(request):
                             col_index = number_prefix % 10
                             row[col_index] = result.number
                 chart_data.append((time_slot.strftime("%I:%M %p"), row))
-    # --- Next Draw Countdown ---
+
     next_draw_time = get_next_draw_time(now)
     if next_draw_time:
-        # Add 30 second offset for display
         next_draw_time += timedelta(seconds=30)
         time_diff = next_draw_time - now
         total_seconds = int(time_diff.total_seconds())
@@ -550,15 +570,23 @@ def index(request):
     column_headers = list(range(11))
     row_headers = [f"{i:02}" for i in range(0, 100, 10)] 
     selected_date_display = selected_date_obj.strftime('%d-%m-%Y')
-    if selected_time_obj:
-        selected_time_display = selected_time_obj.strftime('%I:%M %p')
+    if show_history == "4":
+      selected_time_display = "All Times"
+    elif selected_time_obj:
+      selected_time_display = selected_time_obj.strftime('%I:%M %p')
+    elif selected_date_obj == today:
+      selected_time_display = current_slot_time
     else:
-        selected_time_display = "All Times"
+      selected_time_display = "All Times"
+    has_results = any(
+      any(bool(cell and str(cell).strip()) for cell in row)
+      for row in grid
+    )
 
     return render(request, 'index.html', {
         'grid': grid,
         'column_headers': column_headers,
-        'row_headers':row_headers,
+        'row_headers': row_headers,
         'results_exist': results_exist,
         'time_slots': time_slots,
         'selected_date': selected_date,
@@ -575,5 +603,6 @@ def index(request):
         'current_slot_time': current_slot_time,
         'selected_date_display': selected_date_display,
         'selected_time_display': selected_time_display,
-        'mode':mode,
+        'mode': mode,
+        'has_results':has_results
     })

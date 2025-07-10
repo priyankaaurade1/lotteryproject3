@@ -1,4 +1,45 @@
+# Python
 __pycache__/
+*.py[cod]
+*.so
+*.log
+
+# Virtual environment
+venv/
+env/
+
+# Django stuff
+*.sqlite3
+*.db
+*.pot
 *.pyc
-db.sqlite3
-venv
+
+# Secret files
+.env
+.env.*
+
+# Static/media files (if generated or collected)
+staticfiles/
+media/
+static/
+
+# VS Code / IDE
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Backup files
+*.bak
+*.swp
+*.tmp
+*~
+
+# Node (if used)
+node_modules/

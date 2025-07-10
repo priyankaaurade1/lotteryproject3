@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-xafi_y=62w7n7)oz@bycp!@=x&x4-l_@c_x#md+=-y&^bni2*1
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
+import os
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'lotteryproject.settings')
 
 # Application definition
 
