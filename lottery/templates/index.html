@@ -84,6 +84,16 @@ td{
     .smaller-mobile {
       gap: 0rem !important;
     }
+    .head {
+      text-align: center;
+      margin: 0px auto;
+      background-color: #FFA7DC;
+      background-image: linear-gradient(to bottom right, #c494d8);
+      padding-bottom: 5px;
+    }
+    .text-label-mini{
+      margin-right: 25px;
+    }
   }
 
   @media (max-width: 336px) {
@@ -109,6 +119,9 @@ td{
   .small-block {
     min-width: 32% !important;
   }
+  .text-label-mini{
+      margin-right: 25px;
+    }
 }
 
 
@@ -141,6 +154,9 @@ td{
     }
     #mainForm {
       font-size: 13px;
+    }
+    .text-label-mini{
+      margin-right: 25px;
     }
   }
 
@@ -789,7 +805,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
 </script>
-<script>
+<!-- <script>
 let nextDrawTimeStr = document.querySelector(".nextDrawTime").value;
 function showBlackScreen() {
   const overlay = document.createElement('div');
@@ -818,29 +834,29 @@ function updateCountdown(newSeconds) {
   }
 }
 
-// async function pollNextDrawTime() {
-//   try {
-//     const response = await fetch("{% url 'next_draw_time_api' %}");
-//     const data = await response.json();
+async function pollNextDrawTime() {
+  try {
+    const response = await fetch("{% url 'next_draw_time_api' %}");
+    const data = await response.json();
 
-//     if (data.next_draw_time_str) {
-//       if (data.next_draw_time_str !== nextDrawTimeStr) {
-//         // It changed → show black screen and reload ONCE
-//         showBlackScreen();
-//         setTimeout(() => location.reload(), 2000);
-//         // STOP here! Don't update local variable (so after reload it's correct)
-//         return;
-//       }
+    if (data.next_draw_time_str) {
+      if (data.next_draw_time_str !== nextDrawTimeStr) {
+        // It changed → show black screen and reload ONCE
+        showBlackScreen();
+        setTimeout(() => location.reload(), 2000);
+        // STOP here! Don't update local variable (so after reload it's correct)
+        return;
+      }
 
-//       // Only update countdown if no change
-//       updateCountdown(data.total_seconds);
-//     }
-//   } catch (error) {
-//     console.error("Polling error:", error);
-//   }
-// }
+      // Only update countdown if no change
+      updateCountdown(data.total_seconds);
+    }
+  } catch (error) {
+    console.error("Polling error:", error);
+  }
+}
 
-// setInterval(pollNextDrawTime, 5000);
+setInterval(pollNextDrawTime, 5000); -->
 </script>
 </body>
 </html>
