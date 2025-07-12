@@ -251,6 +251,7 @@ td{
         <div class="text-label me-4">Draw Time: <span>{{ selected_time_display }}</span></div>
         <div class="text-label">Next Draw: <span class="nextDraw">--:--:--</span></div>
         <input type="hidden" class="nextDrawTime" value="{{ next_draw_time_str }}">
+        <input type="hidden" class="autoRefreshTime" value="{{ auto_refresh_time_str }}">
       </div>
     </div>
     <!-- mobile view -->
@@ -269,6 +270,7 @@ td{
         <div class="text-label-mini">Draw Time: <span>{{ selected_time_display }}</span></div>
         <div class="text-label-mini" style="margin-right: 8px;">Next Draw: <span class="nextDraw">--:--:--</span></div>
         <input type="hidden" class="nextDrawTime" value="{{ next_draw_time_str }}">
+        <input type="hidden" class="autoRefreshTime" value="{{ auto_refresh_time_str }}">
       </div>
     </div>
     <section id="timeSelector" >
@@ -571,90 +573,79 @@ td{
   <p style="margin-top: 0;margin-bottom: 0rem;">&copy; 2025 playstar.live</p>
 </footer> -->
 <script>
-let reloadScheduled = false;
+document.addEventListener("DOMContentLoaded", function () {
+    const nextDrawEls = document.querySelectorAll(".nextDraw");
+    const currentTimeEls = document.querySelectorAll(".currentTime");
+    const nextDrawInput = document.querySelector(".nextDrawTime");
+    const autoRefreshInput = document.querySelector(".autoRefreshTime");
 
-function updateTimes() {
-  const now = new Date();
-  const realKolkataTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
+    const nextDrawTimeStr = nextDrawInput ? nextDrawInput.value : "";
+    const autoRefreshTimeStr = autoRefreshInput ? autoRefreshInput.value : "";
 
-  // 30 second shift for display
-  const shiftedKolkataTime = new Date(realKolkataTime);
-  shiftedKolkataTime.setSeconds(shiftedKolkataTime.getSeconds() - 30);
-
-  // Show shifted current time
-  let hour = shiftedKolkataTime.getHours();
-  const minute = shiftedKolkataTime.getMinutes();
-  const second = shiftedKolkataTime.getSeconds();
-
-  let hour12 = hour % 12;
-  hour12 = hour12 === 0 ? 12 : hour12;
-
-  const formattedTime = `${String(hour12).padStart(2,'0')}:${String(minute).padStart(2,'0')}:${String(second).padStart(2,'0')} ${hour >= 12 ? "PM" : "AM"}`;
-  document.querySelectorAll(".currentTime").forEach(el => {
-    el.textContent = formattedTime;
-  });
-
-  // Countdown
-  const nextDrawInputs = document.querySelectorAll(".nextDrawTime");
-  const nextDrawElems = document.querySelectorAll(".nextDraw");
-  if (!nextDrawInputs.length || !nextDrawElems.length) return;
-
-  nextDrawInputs.forEach((input, index) => {
-    let originalTargetDrawTime = new Date(input.value);
-    originalTargetDrawTime.setSeconds(originalTargetDrawTime.getSeconds() - 30);
-
-    const todayNineAM = new Date(shiftedKolkataTime);
-    todayNineAM.setHours(9, 0, 0, 0);
-
-    const todayNineThirtyPM = new Date(shiftedKolkataTime);
-    todayNineThirtyPM.setHours(21, 30, 0, 0);
-
-    const tomorrowNineAM = new Date(shiftedKolkataTime);
-    tomorrowNineAM.setDate(tomorrowNineAM.getDate() + 1);
-    tomorrowNineAM.setHours(9, 0, 0, 0);
-
-    // Switch to tomorrow if past
-    if (shiftedKolkataTime >= todayNineThirtyPM || originalTargetDrawTime <= shiftedKolkataTime) {
-      originalTargetDrawTime = tomorrowNineAM;
+    function parseTime(s) {
+        return new Date(s);
     }
 
-    const diffMs = originalTargetDrawTime - shiftedKolkataTime;
-    if (diffMs <= 0) {
-      if (!reloadScheduled) {
-        reloadScheduled = true;
-        location.reload();
-      }
-      return;
+    const nextDrawTime = nextDrawTimeStr ? parseTime(nextDrawTimeStr) : null;
+    const autoRefreshTime = autoRefreshTimeStr ? parseTime(autoRefreshTimeStr) : null;
+
+    function updateCountdown() {
+        const now = new Date();
+
+        // Live clock in 12-hour AM/PM
+        currentTimeEls.forEach(el => {
+            let hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            const ampm = hours >= 12 ? "PM" : "AM";
+            hours = hours % 12;
+            if (hours === 0) hours = 12;
+            el.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')} ${ampm}`;
+        });
+
+        if (nextDrawEls && nextDrawTime) {
+            // Difference in seconds
+            let diffSeconds = Math.floor((now - nextDrawTime) / 1000);
+
+            // Always show ABSOLUTE for countdown/count-up effect
+            let displayDiff = Math.abs(diffSeconds);
+
+            const hours = Math.floor(displayDiff / 3600);
+            const minutes = Math.floor((displayDiff % 3600) / 60);
+            const seconds = displayDiff % 60;
+
+            let countdownText;
+            if (now.getHours() >= 9 && now.getHours() < 21) {
+                // Day mode: mm:ss
+                countdownText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            } else {
+                // Night mode: hh:mm:ss
+                countdownText = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }
+
+            nextDrawEls.forEach(el => {
+                el.textContent = countdownText;
+            });
+
+            // Auto-refresh after 30 seconds past draw time
+            if (diffSeconds >= 30) {
+                location.reload();
+            }
+        } else {
+            nextDrawEls.forEach(el => {
+                el.textContent = "No more draws today";
+            });
+        }
+
+        // Fallback server-side refresh
+        if (autoRefreshTime && now >= autoRefreshTime) {
+            location.reload();
+        }
     }
 
-    const totalSeconds = Math.floor(diffMs / 1000);
-    const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
-    const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
-    const seconds = String(totalSeconds % 60).padStart(2, '0');
-
-    let countdown;
-    if (shiftedKolkataTime >= todayNineAM && shiftedKolkataTime < todayNineThirtyPM) {
-      // between 9:00 AM and 9:30 PM - show MM:SS
-      countdown = `${minutes}:${seconds}`;
-    } else {
-      // after 9:30 PM till next morning 9:00 AM - show HH:MM:SS
-      countdown = `${hours}:${minutes}:${seconds}`;
-    }
-
-    nextDrawElems[index].textContent = countdown;
-
-    // Extra safety: if countdown hits zero visually
-    if (countdown === "00:00" || countdown === "00:00:00") {
-      if (!reloadScheduled) {
-        reloadScheduled = true;
-        setTimeout(() => location.reload(), 500);
-      }
-    }
-  });
-}
-
-setInterval(updateTimes, 1000);
-updateTimes();
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+});
 </script>
 <script>
 function setHistoryModeAndSubmit(mode) {
@@ -713,8 +704,6 @@ function setMode() {
       button.addEventListener("click", function () {
         const start = parseInt(this.dataset.chartNumber);
         const end = start + 10;
-
-
         for (let col = 0; col < 10; col++) {
           const show = (col >= start / 10 && col < end / 10);
           const headerCell = document.querySelector(`.chart-column.chart${col}`);
@@ -728,18 +717,6 @@ function setMode() {
         }
       });
     });
-
-    // const showHistory = "{{ show_history }}";
-    // const historyMode = "{{ history_mode }}";
-
-    // if (showHistory === "4" && historyMode === "full") {
-    //   document.getElementById("show_history_input").value = "4";
-    //   document.getElementById("history_mode_input").value = "full";
-    // }
-    // else {
-    //   document.getElementById("show_history_input").value = "3"; 
-    //   document.getElementById("history_mode_input").value = "";
-    // }
   });
 </script>
 <script>
@@ -761,7 +738,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (showHistory === "3") {
     timeSelector.style.display = "none";
-
     const hoverZones = document.querySelectorAll(".timeHoverZone");
 
     hoverZones.forEach((zone) => {
@@ -815,7 +791,6 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 <script>
 let nextDrawTimeStr = document.querySelector(".nextDrawTime").value;
-
 function showBlackScreen() {
   const overlay = document.createElement('div');
   overlay.style.position = "fixed";
@@ -867,6 +842,5 @@ function updateCountdown(newSeconds) {
 
 // setInterval(pollNextDrawTime, 5000);
 </script>
-
 </body>
 </html>

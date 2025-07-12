@@ -93,6 +93,8 @@ td {
   {% endfor %}
 </div>
 <script>
+let gracePeriodStart = null;
+
 function updateTimes() {
   const now = new Date();
   const kolkataTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
@@ -116,78 +118,32 @@ function updateTimes() {
   let nextDraw = new Date(nextDrawInput.value);
   let diff = nextDraw - kolkataTime;
 
-  // If nextDraw time already passed (e.g. after 9:30 PM), set countdown to next day 9:00 AM
-  if (diff <= 0) {
-    const tomorrow9am = new Date(kolkataTime);
-    tomorrow9am.setDate(tomorrow9am.getDate() + 1);
-    tomorrow9am.setHours(9, 0, 0, 0);
-    diff = tomorrow9am - kolkataTime;
-    location.reload();
-    return;
-  }
-
   if (diff > 0) {
+    // Normal countdown
+    gracePeriodStart = null;
     const totalSeconds = Math.floor(diff / 1000);
     const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
     const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
     const s = String(totalSeconds % 60).padStart(2, '0');
     nextDrawElem.textContent = `${h}:${m}:${s}`;
   } else {
-    nextDrawElem.textContent = "00:00:00";
+    // Countdown hit zero. Start grace period if not already started.
+    if (!gracePeriodStart) {
+      gracePeriodStart = Date.now();
+    }
+    const graceElapsed = Math.floor((Date.now() - gracePeriodStart) / 1000);
+
+    if (graceElapsed >= 30) {
+      location.reload();
+      return;
+    } else {
+      const remaining = 30 - graceElapsed;
+      nextDrawElem.textContent = `00:00:${String(remaining).padStart(2, '0')}`;
+    }
   }
 }
+
 setInterval(updateTimes, 1000);
 updateTimes();
 </script>
-<script>
-  document.querySelectorAll(".autoSubmit").forEach(el => {
-    el.addEventListener("change", () => {
-      document.getElementById("historyForm").submit();
-    });
-  });
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-  let nextDrawTimeStr = document.getElementById('nextDrawTime')?.value;
-
-  async function pollNextDrawTime() {
-    try {
-      const response = await fetch("{% url 'next_draw_time_api' %}");
-      const data = await response.json();
-
-      if (!data.next_draw_time_str) return;
-
-      if (data.next_draw_time_str !== nextDrawTimeStr) {
-        // New postponed time detected! Reload to reflect new countdown
-        location.reload();
-        return;
-      }
-
-      // Otherwise just update countdown
-      updateCountdownDisplay(data.total_seconds);
-    } catch (error) {
-      console.error('Error polling next draw time:', error);
-    }
-  }
-
-  function updateCountdownDisplay(totalSeconds) {
-    const countdownEl = document.getElementById('nextDraw');
-    if (!countdownEl) return;
-
-    if (totalSeconds <= 0) {
-      location.reload();
-      return;
-    }
-
-    const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
-    const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
-    const s = String(totalSeconds % 60).padStart(2, '0');
-    countdownEl.textContent = `${h}:${m}:${s}`;
-  }
-
-  setInterval(pollNextDrawTime, 5000);
-  pollNextDrawTime();
-});
-</script>
-
 {% endblock %}
