@@ -113,6 +113,7 @@ def edit_results(request):
         selected_slot_str, selected_slot = future_slots[0]
     # Nothing to edit if no slot
     if not selected_slot:
+        total_seconds = 0
         return render(request, 'lottery/edit_results.html', {
             'table': None,
             'time_slot': None,
@@ -142,6 +143,7 @@ def edit_results(request):
     next_draw_str = f"{hours:02}:{minutes:02}:{seconds:02}"
     # Load or generate results table
     results = LotteryResult.objects.filter(date=selected_date, time_slot=selected_slot)
+    has_real_results = results.exists()
     table = [[None for _ in range(10)] for _ in range(10)]
     if results.exists():
         for result in results:
@@ -163,7 +165,7 @@ def edit_results(request):
         'selected_date': selected_date.strftime('%Y-%m-%d'),
         'selected_slot': selected_slot_str,
         'all_slots': [label for label, _ in time_slots],
-        'is_editable': is_editable,
+        'is_editable': is_editable and has_real_results,
         'total_seconds': total_seconds,
     })
 
@@ -199,6 +201,7 @@ def results_history(request):
     now = localtime()
     today = now.date()
     next_draw_time_str = ""
+
     # --- Get selected date and time from POST
     selected_date = request.POST.get("date") or today.strftime('%Y-%m-%d')
     try:
@@ -214,7 +217,7 @@ def results_history(request):
         except ValueError:
             selected_time_obj = None
 
-    # Generate time slots
+    # --- Generate time slots
     time_slots = []
     slot_labels = []
     start = datetime.combine(today, time(9, 0))
@@ -225,12 +228,22 @@ def results_history(request):
         slot_labels.append((slot_str, start.time()))
         start += timedelta(minutes=15)
 
+    # Reverse time_slots and slot_labels to make descending order
+    time_slots.reverse()
+    slot_labels.reverse()
+
     if selected_date_obj == today:
+        found = False
         for label, time_obj in slot_labels:
             slot_dt = datetime.combine(today, time_obj)
             if make_aware(slot_dt) > now:
                 next_draw_time_str = slot_dt.strftime('%Y-%m-%dT%H:%M:%S')
+                found = True
                 break
+        if not found:
+            # After 9:30 PM: set next day's 9:00 AM
+            next_morning = datetime.combine(today + timedelta(days=1), time(9, 0))
+            next_draw_time_str = next_morning.strftime('%Y-%m-%dT%H:%M:%S')
 
     # --- Filter results
     if selected_time_obj:

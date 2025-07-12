@@ -158,14 +158,20 @@ function updateTimes() {
 
   if (!nextDrawInput || !nextDrawElem) return;
 
-  let nextDraw = new Date(nextDrawInput.value);
-  let diff = nextDraw - kolkataTime;
-
-  if (diff <= 0) {
-    // Time's up — reload to get next draw time from server
-    location.reload();
+  let nextDrawValue = nextDrawInput.value;
+  if (!nextDrawValue) {
+    nextDrawElem.textContent = "--:--:--";
     return;
   }
+
+  let nextDraw = new Date(nextDrawValue);
+  if (isNaN(nextDraw.getTime())) {
+    nextDrawElem.textContent = "--:--:--";
+    return;
+  }
+
+  let diff = nextDraw - kolkataTime;
+
 
   const totalSeconds = Math.floor(diff / 1000);
   const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');

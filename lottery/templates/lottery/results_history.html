@@ -98,7 +98,6 @@ let gracePeriodStart = null;
 function updateTimes() {
   const now = new Date();
   const kolkataTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
-
   const currentTimeElem = document.getElementById("currentTime");
   if (currentTimeElem) {
     const hours = kolkataTime.getHours();
@@ -109,10 +108,8 @@ function updateTimes() {
     currentTimeElem.textContent =
       `${String(hour12).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')} ${ampm}`;
   }
-
   const nextDrawInput = document.getElementById("nextDrawTime");
   const nextDrawElem = document.getElementById("nextDraw");
-
   if (!nextDrawInput || !nextDrawElem) return;
 
   let nextDraw = new Date(nextDrawInput.value);
@@ -145,5 +142,14 @@ function updateTimes() {
 
 setInterval(updateTimes, 1000);
 updateTimes();
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".autoSubmit").forEach(el => {
+    el.addEventListener("change", () => {
+      document.getElementById("historyForm").submit();
+    });
+  });
+});
 </script>
 {% endblock %}
