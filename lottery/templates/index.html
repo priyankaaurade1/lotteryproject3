@@ -80,6 +80,74 @@ td{
     font-weight: bold;
   }
 
+@media (min-width: 0px) and (max-width: 352px) {
+  #mainForm {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1px;
+    justify-content: center;
+    align-items: center;
+    font-size: 8px;
+    padding: 1px;
+  }
+
+  #mainForm .small-field {
+    flex: 1 1 45%;
+    min-width: 70px;
+    max-width: 100px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #mainForm .small-field label {
+    font-size: 8px;
+    margin: 0;
+    padding: 0 1px;
+  }
+
+  #mainForm .small-field input,
+  #mainForm .small-field select {
+    font-size: 8px;
+    padding: 0 2px;
+    width: auto;
+    min-width: 45px;
+    max-width: 70px;
+  }
+
+  #mainForm .btn-sm,
+  #mainForm .dropdown-toggle {
+    font-size: 8px;
+    padding: 1px 3px;
+    line-height: 1.2;
+  }
+
+  #mainForm .dropdown-menu {
+    font-size: 8px;
+  }
+
+  #timeSelector {
+    padding: 1px;
+  }
+
+  .btn-success.btn-sm,
+  .btn-outline-primary {
+    padding: 1px 3px;
+    font-size: 8px;
+  }
+
+  .text-label-mini,
+  .main-title-mini {
+    font-size: 8px;
+  }
+
+  .d-flex.d-lg-none.flex-row {
+    gap: 1px;
+    padding: 1px;
+    flex-wrap: wrap;
+  }
+}
   @media screen and (max-width: 358px) {
     .smaller-mobile {
       gap: 0rem !important;
@@ -590,77 +658,49 @@ td{
 </footer> -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    const nextDrawEls = document.querySelectorAll(".nextDraw");
-    const currentTimeEls = document.querySelectorAll(".currentTime");
-    const nextDrawInput = document.querySelector(".nextDrawTime");
-    const autoRefreshInput = document.querySelector(".autoRefreshTime");
+  const nextDrawEls = document.querySelectorAll(".nextDraw");
+  const currentTimeEls = document.querySelectorAll(".currentTime");
 
-    const nextDrawTimeStr = nextDrawInput ? nextDrawInput.value : "";
-    const autoRefreshTimeStr = autoRefreshInput ? autoRefreshInput.value : "";
+  function updateCountdown() {
+    const now = new Date();
 
-    function parseTime(s) {
-        return new Date(s);
+    // Live clock
+    currentTimeEls.forEach(el => {
+      let hours = now.getHours();
+      const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
+      const ampm = hours >= 12 ? "PM" : "AM";
+      hours = hours % 12;
+      if (hours === 0) hours = 12;
+      el.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')} ${ampm}`;
+    });
+
+    // Find next 15-min slot
+    let nextDraw = new Date(now);
+    nextDraw.setSeconds(0, 0);
+    nextDraw.setMinutes(Math.ceil(now.getMinutes() / 15) * 15);
+    if (nextDraw <= now) {
+      nextDraw.setMinutes(nextDraw.getMinutes() + 15);
     }
 
-    const nextDrawTime = nextDrawTimeStr ? parseTime(nextDrawTimeStr) : null;
-    const autoRefreshTime = autoRefreshTimeStr ? parseTime(autoRefreshTimeStr) : null;
+    // Countdown
+    let diffSeconds = Math.floor((nextDraw - now) / 1000);
+    if (diffSeconds < 0) diffSeconds = 0;
+    const minutes = Math.floor(diffSeconds / 60);
+    const seconds = diffSeconds % 60;
 
-    function updateCountdown() {
-        const now = new Date();
+    nextDrawEls.forEach(el => {
+      el.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    });
 
-        // Live clock in 12-hour AM/PM
-        currentTimeEls.forEach(el => {
-            let hours = now.getHours();
-            const minutes = now.getMinutes();
-            const seconds = now.getSeconds();
-            const ampm = hours >= 12 ? "PM" : "AM";
-            hours = hours % 12;
-            if (hours === 0) hours = 12;
-            el.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')} ${ampm}`;
-        });
-
-        if (nextDrawEls && nextDrawTime) {
-            // Difference in seconds
-            let diffSeconds = Math.floor((now - nextDrawTime) / 1000);
-
-            // Always show ABSOLUTE for countdown/count-up effect
-            let displayDiff = Math.abs(diffSeconds);
-
-            const hours = Math.floor(displayDiff / 3600);
-            const minutes = Math.floor((displayDiff % 3600) / 60);
-            const seconds = displayDiff % 60;
-
-            let countdownText;
-            if (now.getHours() >= 9 && now.getHours() < 21) {
-                // Day mode: mm:ss
-                countdownText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-            } else {
-                // Night mode: hh:mm:ss
-                countdownText = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-            }
-
-            nextDrawEls.forEach(el => {
-                el.textContent = countdownText;
-            });
-
-            // Auto-refresh after 30 seconds past draw time
-            if (diffSeconds >= 30) {
-                location.reload();
-            }
-        } else {
-            nextDrawEls.forEach(el => {
-                el.textContent = "No more draws today";
-            });
-        }
-
-        // Fallback server-side refresh
-        if (autoRefreshTime && now >= autoRefreshTime) {
-            location.reload();
-        }
+    // Reload exactly at 30s after any 15-min mark
+    if (now.getMinutes() % 15 === 0 && now.getSeconds() === 30) {
+      location.reload();
     }
+  }
 
-    setInterval(updateCountdown, 1000);
-    updateCountdown();
+  setInterval(updateCountdown, 1000);
+  updateCountdown();
 });
 </script>
 <script>

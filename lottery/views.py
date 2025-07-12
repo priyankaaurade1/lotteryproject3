@@ -308,6 +308,7 @@ def get_next_draw_time(now):
     offset = DrawOffset.get_offset()
     now_with_offset = now + offset
 
+    # First and last draw times with offset
     draw_start = now_with_offset.replace(hour=9, minute=0, second=0, microsecond=0)
     draw_end = now_with_offset.replace(hour=21, minute=30, second=0, microsecond=0)
 
@@ -316,16 +317,16 @@ def get_next_draw_time(now):
         return draw_start - offset
 
     if now_with_offset > draw_end:
-        # After last slot → tomorrow 9:00
+        # After last slot → next day 9:00 AM
         next_day = now_with_offset + timedelta(days=1)
         return next_day.replace(hour=9, minute=0, second=0, microsecond=0) - offset
 
-    # Otherwise → round UP to next 15 min slot
-    minutes = (now_with_offset.minute // 15 + 1) * 15
-    next_time = now_with_offset.replace(minute=0, second=0, microsecond=0) + timedelta(minutes=minutes)
+    # Otherwise → round up to the next 15-minute slot
+    minute_block = (now_with_offset.minute // 15 + 1) * 15
+    next_time = now_with_offset.replace(minute=0, second=0, microsecond=0) + timedelta(minutes=minute_block)
 
     if next_time > draw_end:
-        # Past last slot today → tomorrow 9:00
+        # Past last slot → next day 9:00 AM
         next_time = (now_with_offset + timedelta(days=1)).replace(hour=9, minute=0, second=0, microsecond=0)
 
     return next_time - offset
@@ -399,7 +400,6 @@ def index(request):
         if last_slot_dt:
             selected_time_obj = last_slot_dt.time()
         else:
-            # Before first draw of the day
             selected_time_obj = time(9, 0)
         selected_time = selected_time_obj.strftime('%I:%M %p')
 
@@ -533,14 +533,16 @@ def index(request):
                             row[col_index] = result.number
                 chart_data.append((time_slot.strftime("%I:%M %p"), row))
 
-    # Next draw
+    # ✅ CORRECTED NEXT DRAW LOGIC BELOW
     next_draw_time = get_next_draw_time(now)
     if next_draw_time:
         next_draw_time_str = next_draw_time.strftime("%Y-%m-%dT%H:%M:%S")
         auto_refresh_time = next_draw_time + timedelta(seconds=30)
         auto_refresh_time_str = auto_refresh_time.strftime("%Y-%m-%dT%H:%M:%S")
-        time_diff = next_draw_time - now
-        total_seconds = int(time_diff.total_seconds())
+
+        # Always show *absolute* difference (so it keeps ticking up after draw time)
+        time_diff = now - next_draw_time
+        total_seconds = abs(int(time_diff.total_seconds()))
         hours, rem = divmod(total_seconds, 3600)
         minutes, seconds = divmod(rem, 60)
         next_draw_str = f"{hours:02}:{minutes:02}:{seconds:02}"
